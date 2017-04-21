@@ -24,6 +24,12 @@
   },
   "homepage": "https://github.com/jakkaj/k-scratch-node#readme",
   "devDependencies": {
+    "@types/node": "^7.0.13",
     "typescript": "^2.2.2"
+  },
+  "dependencies": {
+    "commander": "^2.9.0",
+    "inversify": "^3.3.0",
+    "reflect-metadata": "^0.1.10"
   }
 }
