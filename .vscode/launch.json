@@ -9,10 +9,13 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
+            "args": [
+                
+            ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",
             "outFiles": [
-                "${workspaceRoot}/build/debug/**/*.js"
+                "${workspaceRoot}/build/output/**/*.js"
             ],
             "sourceMaps": true
         }

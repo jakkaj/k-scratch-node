@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 
-import { glue } from "./glue/glue";
+import { glue, glueBase } from "./glue/glue";
 
-import  * as program from "commander";
 
-program
-    .version("{$version}")
-    .option('-l, --log', 'Output the Kudulog stream to the console')
-    .parse(process.argv);
+import * as program from "commander";
+import { IBootService, tContracts } from "./model/contract/ServiceContracts";
+
+class init extends glueBase{
+    async start(argv){    
+       var booter = this.glue.container.get<IBootService>(tContracts.IBootService);  
+       await booter.booted(argv);
+    }
+}
+
+var i = new init();
+i.start(process.argv);
+
 
     

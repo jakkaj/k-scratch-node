@@ -2,7 +2,10 @@
   "name": "k-scratch-node",
   "version": "1.0.0",
   "description": "kscratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping",
-  "main": "index.js",
+  "main": "build/output/ks.js",
+  "bin": {
+    "ks": "build/output/ks.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,7 +27,7 @@
   },
   "homepage": "https://github.com/jakkaj/k-scratch-node#readme",
   "devDependencies": {
-    "@types/node": "^7.0.13",
+    "@types/node": "^7.0.13",    
     "typescript": "^2.2.2"
   },
   "dependencies": {
