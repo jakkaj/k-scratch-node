@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                
+                "-p","C:\\Temp\\func\\funcionplayground\\functions"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",

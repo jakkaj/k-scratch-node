@@ -5,6 +5,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -14,14 +17,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
 const inversify_1 = require("inversify");
 require("reflect-metadata");
+const ServiceContracts_1 = require("../contract/ServiceContracts");
 const program = require("commander");
-let bootService = class bootService {
+const serviceBase_1 = require("./serviceBase");
+let bootService = class bootService extends serviceBase_1.serviceBase {
+    constructor(configService) {
+        super();
+        this._configService = configService;
+    }
     booted(argv) {
         return __awaiter(this, void 0, void 0, function* () {
             this.argv = argv;
             this._process(argv);
+            var cwdPath = process.cwd().toString();
             if (argv.length === 2) {
                 this._help();
                 return;
@@ -29,6 +40,16 @@ let bootService = class bootService {
             if (program.log) {
                 console.log("You logged!");
             }
+            if (program.path) {
+                if (!path.isAbsolute(program.path)) {
+                    cwdPath = path.join(cwdPath, program.path);
+                }
+                else {
+                    cwdPath = program.path;
+                }
+            }
+            this.logger.log("Base path: " + cwdPath);
+            yield this._configService.init(cwdPath);
         });
     }
     _help() {
@@ -38,11 +59,13 @@ let bootService = class bootService {
         program
             .version("{$version}")
             .option('-l, --log', 'Output the Kudulog stream to the console')
+            .option('-p, --path [functionPath]', 'The base path of your function (blank for current path)')
             .parse(argv);
     }
 };
 bootService = __decorate([
-    inversify_1.injectable()
+    inversify_1.injectable(),
+    __param(0, inversify_1.inject(ServiceContracts_1.tContracts.IConfigService))
 ], bootService);
 exports.bootService = bootService;
 //# sourceMappingURL=bootService.js.map

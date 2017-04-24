@@ -1,8 +1,10 @@
 import "reflect-metadata";
 import { Container } from "inversify"
 
-import {IBootService, tContracts} from "../model/contract/ServiceContracts";
-import {bootService} from "../model/service/bootService";
+import { IBootService, tContracts, IConfigService, ILocalLogService } from "../model/contract/ServiceContracts";
+import { bootService } from "../model/service/bootService";
+import { configService } from "../model/service/configService";
+import { localLogService } from "../model/service/localLogService";
 
 class glue{
     public container:Container;
@@ -10,8 +12,10 @@ class glue{
     constructor(){
         this.container = new Container();
 
-         this.container.bind<IBootService>(tContracts.IBootService).to(bootService);
-        // this.container.bind<someOtherService>("aa").to(someOtherService);
+        this.container.bind<IBootService>(tContracts.IBootService).to(bootService).inSingletonScope();
+        this.container.bind<IConfigService>(tContracts.IConfigService).to(configService).inSingletonScope();
+        this.container.bind<ILocalLogService>(tContracts.ILocalLogService).to(localLogService).inSingletonScope();
+        
     }    
 }
 
