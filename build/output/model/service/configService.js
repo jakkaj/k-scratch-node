@@ -32,6 +32,7 @@ let configService = class configService extends serviceBase_1.serviceBase {
                 return false;
             }
             var configFile = yield this._findConfigFile(this._basePath);
+            var config = yield this._getPublishFile(configFile);
             return true;
         });
     }
@@ -50,7 +51,7 @@ let configService = class configService extends serviceBase_1.serviceBase {
                     for (var fNumber in files) {
                         var f = files[fNumber];
                         if (f.toLowerCase().indexOf('publishsettings') != -1) {
-                            return f;
+                            return path.join(cwd, f);
                         }
                     }
                 }
@@ -75,8 +76,15 @@ let configService = class configService extends serviceBase_1.serviceBase {
                 this.logger.logError("Publish file opened by is empty: " + fileName);
                 return null;
             }
-            var xmlParsed = yield xml2js(file);
-            return file;
+            var p = new Promise((good, bad) => {
+                xml2js.parseString(file, (err, result) => {
+                    if (err)
+                        bad(err);
+                    else
+                        good(result);
+                });
+            });
+            return p;
         });
     }
     get basePath() {

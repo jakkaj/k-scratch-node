@@ -29,6 +29,8 @@ class configService extends serviceBase implements IConfigService {
 
         var configFile = await this._findConfigFile(this._basePath);
 
+        var config = await this._getPublishFile(configFile);
+
         return true;
     }
 
@@ -50,7 +52,7 @@ class configService extends serviceBase implements IConfigService {
                 for(var fNumber in files){
                     var f = files[fNumber];
                     if(f.toLowerCase().indexOf('publishsettings')!=-1){
-                        return f;
+                        return path.join(cwd, f);
                     }
                 }                
             }
@@ -67,7 +69,7 @@ class configService extends serviceBase implements IConfigService {
         
     }
 
-    private async _getPublishFile(fileName: string):Promise<string>{
+    private async _getPublishFile(fileName: string):Promise<any>{
         
         if(!await afs.exists(fileName)){
             this.logger.logError("Publish file could not be found/opened: " + fileName);
@@ -81,9 +83,14 @@ class configService extends serviceBase implements IConfigService {
              return null;
         }
 
-        var xmlParsed = await xml2js(file);
+        var p = new Promise<any>((good, bad)=>{
+                xml2js.parseString(file,(err,result) => {
+                    if (err) bad(err);
+                    else good(result);
+            });
+        });
 
-        return file;
+        return p;
     }
 
     get basePath():string{
