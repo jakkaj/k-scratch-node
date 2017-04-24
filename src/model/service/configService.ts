@@ -8,6 +8,7 @@ import { injectable, inject } from 'inversify';
 
 import { IConfigService, tContracts, ILocalLogService } from "../contract/ServiceContracts";
 import { serviceBase } from "./serviceBase";
+import { publishSettings } from "../entity/publishSettings";
 
 
 
@@ -30,6 +31,8 @@ class configService extends serviceBase implements IConfigService {
         var configFile = await this._findConfigFile(this._basePath);
 
         var config = await this._getPublishFile(configFile);
+
+        var s = config.publishProfile[0].profileName;
 
         return true;
     }
@@ -69,7 +72,7 @@ class configService extends serviceBase implements IConfigService {
         
     }
 
-    private async _getPublishFile(fileName: string):Promise<any>{
+    private async _getPublishFile(fileName: string):Promise<publishSettings>{
         
         if(!await afs.exists(fileName)){
             this.logger.logError("Publish file could not be found/opened: " + fileName);
@@ -83,10 +86,21 @@ class configService extends serviceBase implements IConfigService {
              return null;
         }
 
-        var p = new Promise<any>((good, bad)=>{
+        var p = new Promise<publishSettings>((good, bad)=>{
                 xml2js.parseString(file,(err,result) => {
                     if (err) bad(err);
-                    else good(result);
+                    else{
+
+                        var profile:publishSettings = {
+                            publishProfile: []
+                        }
+
+                        profile.publishProfile = result.publishData.publishProfile.map((d)=>{
+                            return d.$;
+                        });
+                        
+                        good(profile);
+                    } 
             });
         });
 

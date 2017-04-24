@@ -33,6 +33,7 @@ let configService = class configService extends serviceBase_1.serviceBase {
             }
             var configFile = yield this._findConfigFile(this._basePath);
             var config = yield this._getPublishFile(configFile);
+            var s = config.publishProfile[0].profileName;
             return true;
         });
     }
@@ -80,8 +81,15 @@ let configService = class configService extends serviceBase_1.serviceBase {
                 xml2js.parseString(file, (err, result) => {
                     if (err)
                         bad(err);
-                    else
-                        good(result);
+                    else {
+                        var profile = {
+                            publishProfile: []
+                        };
+                        profile.publishProfile = result.publishData.publishProfile.map((d) => {
+                            return d.$;
+                        });
+                        good(profile);
+                    }
                 });
             });
             return p;
