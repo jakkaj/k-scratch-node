@@ -34,6 +34,8 @@ class configService extends serviceBase implements IConfigService {
 
         this._basePath = basePath;
 
+        console.info("[Working Dir] " + this._basePath);
+
         if(!this._validatePath(this._basePath)){
             this.logger.logError("Path not found " + this._basePath);
             return false;

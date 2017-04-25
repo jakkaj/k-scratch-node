@@ -39,9 +39,7 @@ class bootService extends serviceBase implements IBootService {
 
         if(program.path){
              cwdPath = program.path;
-        }
-
-        this.logger.log("Setting base path [" + cwdPath + "]");
+        }        
 
         var initGood = await this._configService.init(cwdPath);
 
