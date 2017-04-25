@@ -17,4 +17,13 @@ serviceBase = __decorate([
     inversify_1.injectable()
 ], serviceBase);
 exports.serviceBase = serviceBase;
+let configBase = class configBase extends serviceBase {
+};
+__decorate([
+    inversify_1.inject(ServiceContracts_1.tContracts.IConfigService)
+], configBase.prototype, "configService", void 0);
+configBase = __decorate([
+    inversify_1.injectable()
+], configBase);
+exports.configBase = configBase;
 //# sourceMappingURL=serviceBase.js.map

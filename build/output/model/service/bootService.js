@@ -23,9 +23,10 @@ const ServiceContracts_1 = require("../contract/ServiceContracts");
 const program = require("commander");
 const serviceBase_1 = require("./serviceBase");
 let bootService = class bootService extends serviceBase_1.serviceBase {
-    constructor(configService) {
+    constructor(configService, kuduLogService) {
         super();
         this._configService = configService;
+        this._kuduLogService = kuduLogService;
     }
     booted(argv) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -44,6 +45,12 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             }
             this.logger.log("Setting base path [" + cwdPath + "]");
             var initGood = yield this._configService.init(cwdPath);
+            if (!initGood) {
+                return false;
+            }
+            if (program.log) {
+                this._kuduLogService.startLog();
+            }
             return initGood;
         });
     }
@@ -60,7 +67,8 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
 };
 bootService = __decorate([
     inversify_1.injectable(),
-    __param(0, inversify_1.inject(ServiceContracts_1.tContracts.IConfigService))
+    __param(0, inversify_1.inject(ServiceContracts_1.tContracts.IConfigService)),
+    __param(1, inversify_1.inject(ServiceContracts_1.tContracts.IKuduLogService))
 ], bootService);
 exports.bootService = bootService;
 //# sourceMappingURL=bootService.js.map

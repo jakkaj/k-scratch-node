@@ -5,7 +5,7 @@ interface IBootService {
 }
 
 interface IKuduLogService{
-
+    startLog();
 }
 
 interface IConfigService{

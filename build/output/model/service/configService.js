@@ -52,6 +52,18 @@ let configService = class configService extends serviceBase_1.serviceBase {
             return true;
         });
     }
+    getPublishProfile(profileName) {
+        if (!this._publishSettings) {
+            throw 'Publish settings was not initialised in time.';
+        }
+        for (var i in this._publishSettings.publishProfile) {
+            var p = this._publishSettings.publishProfile[i];
+            if (p.publishMethod === profileName) {
+                return p;
+            }
+        }
+        return null;
+    }
     _validatePath(p) {
         var pathExists = fs.existsSync(p);
         return pathExists;

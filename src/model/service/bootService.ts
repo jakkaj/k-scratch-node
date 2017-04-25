@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { injectable, inject } from "inversify";
 import "reflect-metadata";
-import { IBootService, tContracts, IConfigService } from "../contract/ServiceContracts";
+import { IBootService, tContracts, IConfigService, IKuduLogService } from "../contract/ServiceContracts";
 import * as program from "commander";
 import { serviceBase } from "./serviceBase";
 
@@ -10,12 +10,16 @@ import { serviceBase } from "./serviceBase";
 class bootService extends serviceBase implements IBootService {
     
     private _configService : IConfigService;
-
+    private _kuduLogService : IKuduLogService;
     private argv;
     
-    constructor(@inject(tContracts.IConfigService) configService: IConfigService){
+    constructor(
+            @inject(tContracts.IConfigService) configService: IConfigService,
+            @inject(tContracts.IKuduLogService) kuduLogService: IKuduLogService
+        ){
         super();
         this._configService = configService;
+        this._kuduLogService = kuduLogService;
     }
 
     async booted(argv: any) {
@@ -40,6 +44,14 @@ class bootService extends serviceBase implements IBootService {
         this.logger.log("Setting base path [" + cwdPath + "]");
 
         var initGood = await this._configService.init(cwdPath);
+
+        if(!initGood){
+            return false;
+        }
+
+        if(program.log){
+            this._kuduLogService.startLog();
+        }
 
         return initGood;
     }

@@ -57,11 +57,12 @@ let localLogService = class localLogService {
     }
     _check(output, checkThings) {
         var outputLower = output.toLowerCase();
-        checkThings.forEach(thing => {
+        for (var i in checkThings) {
+            var thing = checkThings[i];
             if (output.toLowerCase().indexOf(thing.toLowerCase()) != -1) {
                 return true;
             }
-        });
+        }
         return false;
     }
 };
