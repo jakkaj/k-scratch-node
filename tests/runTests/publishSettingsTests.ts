@@ -30,6 +30,12 @@ class publishSettingsTest extends testBase{
 
         var setting = configService.getPublishProfile(pubType);
 
+        if(setting!=null){
+            console.log(setting.userName);
+            console.log(setting.userPWD);
+            console.log(setting.publishUrl);
+        }
+
         return setting!=null;
 
 
@@ -47,7 +53,7 @@ test('findProfile', async t=>{
     var hasNoProfile = await tests.getPublishProfile(pathWithFile, "Someotherthing");
 
     t.is(hasProfile, true);
-    t.is(hasNoProfile, false);
+    t.is(hasNoProfile, false);   
 
 });
 

@@ -42,6 +42,7 @@
     "commander": "^2.9.0",
     "inversify": "^3.3.0",
     "reflect-metadata": "^0.1.10",
+    "request": "^2.81.0",
     "xml2js": "^0.4.17"
   },
   "ava": {
