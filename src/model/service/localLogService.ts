@@ -17,7 +17,7 @@ class localLogService implements ILocalLogService {
     private _errorBold = chalk.red.bold;
     private _warnRegular = chalk.yellow;
     private _warnBold = chalk.yellow.bold;
-    private _infoRegular = chalk.blue;
+    private _infoRegular = chalk.cyan;
     private _goodRegular = chalk.green;
 
     public log(output: string){
@@ -35,11 +35,11 @@ class localLogService implements ILocalLogService {
     }
 
     public logException(output: string){
-        console.log(this._errorBold("Exception: ", this._errorRegular(output)));
+        console.log(this._errorBold("[Exception] ", this._errorRegular(output)));
     }
 
     public logError(output: string){
-        console.log(this._errorBold("Error: ", this._errorRegular(output)));
+        console.log(this._errorBold("[Error] ", this._errorRegular(output)));
     }
 
     public logInfo(output: string){
@@ -47,7 +47,7 @@ class localLogService implements ILocalLogService {
     }
 
     public logWarning(output: string){
-        console.log(this._warnBold("Error: ", this._warnRegular(output)));
+        console.log(this._warnBold("[Warning] ", this._warnRegular(output)));
     }
 
     public logGood(output: string){

@@ -28,7 +28,7 @@
 			"showOutput": "always",
 			"problemMatcher": ["$gulp-tsc"],
 			"isBuildCommand": false,
-			"args": ["compile_tests"]
+			"args": ["compile:tests"]
 		},
 		{
 			"taskName": "clean:dev",
@@ -49,11 +49,20 @@
 			"isBuildCommand": true
 		},
 		{
-			"taskName": "Ava Tests",
-			"isTestCommand": true,
+			"taskName": "test:ava",
+			"isTestCommand": false,
 			"command": "ava",
 			"isShellCommand": true,
-			"args": ["build/debug/SiteExtension/funcgraph/tests.js"],
+			"args": ["build/test_output/tests.js"],
+			"showOutput": "always"
+			
+		},
+		{
+			"taskName": "test:gulp",
+			"isTestCommand": true,
+			"command": "gulp",
+			"isShellCommand": true,
+			"args": ["test"],
 			"showOutput": "always"
 			
 		}

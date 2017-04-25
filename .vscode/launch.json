@@ -18,6 +18,25 @@
                 "${workspaceRoot}/build/output/**/*.js"
             ],
             "sourceMaps": true
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Test",
+            "program": "${workspaceRoot}/node_modules/ava/profile.js",
+            "args": [
+                "${workspaceRoot}/build/output_test/tests/runTests/publishSettingsTests.js"
+            ],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "build:test",
+            "outFiles": [
+                "${workspaceRoot}/build/output_test/**/*.js"
+            ],
+            "env":{
+                "TestDebug":"true"
+            },
+            "sourceMaps": true
         }
+
     ]
 }

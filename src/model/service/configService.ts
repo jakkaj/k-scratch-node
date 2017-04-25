@@ -31,6 +31,11 @@ class configService extends serviceBase implements IConfigService {
         }
 
         var configFile = await this._findConfigFile(this._basePath);
+        
+        if(configFile == null){
+            this.logger.logWarning("No Publish Settings file - see https://github.com/jakkaj/k-scratch")
+            return false;
+        }
 
         var config = await this._getPublishFile(configFile);
 
@@ -72,6 +77,9 @@ class configService extends serviceBase implements IConfigService {
             //find parent path
 
             var parent = path.join(cwd, "..");
+            if(parent === cwd){
+                return null;
+            }
             return await this._findConfigFile(parent);            
         }catch(e){
             this.logger.logException(e);

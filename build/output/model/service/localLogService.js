@@ -20,7 +20,7 @@ let localLogService = class localLogService {
         this._errorBold = chalk.red.bold;
         this._warnRegular = chalk.yellow;
         this._warnBold = chalk.yellow.bold;
-        this._infoRegular = chalk.blue;
+        this._infoRegular = chalk.cyan;
         this._goodRegular = chalk.green;
     }
     log(output) {
@@ -41,16 +41,16 @@ let localLogService = class localLogService {
         }
     }
     logException(output) {
-        console.log(this._errorBold("Exception: ", this._errorRegular(output)));
+        console.log(this._errorBold("[Exception] ", this._errorRegular(output)));
     }
     logError(output) {
-        console.log(this._errorBold("Error: ", this._errorRegular(output)));
+        console.log(this._errorBold("[Error] ", this._errorRegular(output)));
     }
     logInfo(output) {
         console.log(this._infoRegular(output));
     }
     logWarning(output) {
-        console.log(this._warnBold("Error: ", this._warnRegular(output)));
+        console.log(this._warnBold("[Warning] ", this._warnRegular(output)));
     }
     logGood(output) {
         console.log(this._goodRegular(output));

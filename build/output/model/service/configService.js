@@ -33,6 +33,10 @@ let configService = class configService extends serviceBase_1.serviceBase {
                 return false;
             }
             var configFile = yield this._findConfigFile(this._basePath);
+            if (configFile == null) {
+                this.logger.logWarning("No Publish Settings file - see https://github.com/jakkaj/k-scratch");
+                return false;
+            }
             var config = yield this._getPublishFile(configFile);
             if (!config || !config.publishProfile || config.publishProfile.length == 0) {
                 this.logger.logError("No profiles loaded from " + configFile);
@@ -65,6 +69,9 @@ let configService = class configService extends serviceBase_1.serviceBase {
                 }
                 //find parent path
                 var parent = path.join(cwd, "..");
+                if (parent === cwd) {
+                    return null;
+                }
                 return yield this._findConfigFile(parent);
             }
             catch (e) {

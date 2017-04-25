@@ -39,3 +39,4 @@ jspm_packages
  
 # Custom
 *.js.map
+build/output_test
