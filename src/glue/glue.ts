@@ -5,6 +5,7 @@ import { IBootService, tContracts, IConfigService, ILocalLogService } from "../m
 import { bootService } from "../model/service/bootService";
 import { configService } from "../model/service/configService";
 import { localLogService } from "../model/service/localLogService";
+import { serviceBase } from "../model/service/serviceBase";
 
 class glue{
     public container:Container;
@@ -26,6 +27,7 @@ class glueBase{
         return this._glue;
     }
     constructor(){
+        
         this._glue = new glue();
     }
 }

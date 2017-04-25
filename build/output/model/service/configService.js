@@ -29,11 +29,16 @@ let configService = class configService extends serviceBase_1.serviceBase {
         return __awaiter(this, void 0, void 0, function* () {
             this._basePath = basePath;
             if (!this._validatePath(this._basePath)) {
+                this.logger.logError("Path not found " + this._basePath);
                 return false;
             }
             var configFile = yield this._findConfigFile(this._basePath);
             var config = yield this._getPublishFile(configFile);
-            var s = config.publishProfile[0].profileName;
+            if (!config || !config.publishProfile || config.publishProfile.length == 0) {
+                this.logger.logError("No profiles loaded from " + configFile);
+                return false;
+            }
+            this._publishSettings = config;
             return true;
         });
     }
@@ -52,7 +57,9 @@ let configService = class configService extends serviceBase_1.serviceBase {
                     for (var fNumber in files) {
                         var f = files[fNumber];
                         if (f.toLowerCase().indexOf('publishsettings') != -1) {
-                            return path.join(cwd, f);
+                            var fResult = path.join(cwd, f);
+                            this.logger.logInfo("Using publish settings [" + fResult + "]");
+                            return fResult;
                         }
                     }
                 }

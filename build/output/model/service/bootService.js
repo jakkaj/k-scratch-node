@@ -48,8 +48,9 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
                     cwdPath = program.path;
                 }
             }
-            this.logger.log("Base path: " + cwdPath);
-            yield this._configService.init(cwdPath);
+            this.logger.log("Setting base path [" + cwdPath + "]");
+            var initGood = yield this._configService.init(cwdPath);
+            return initGood;
         });
     }
     _help() {

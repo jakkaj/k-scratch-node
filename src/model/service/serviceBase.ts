@@ -6,7 +6,7 @@ import { ILocalLogService, tContracts } from "../contract/ServiceContracts";
 class serviceBase {
     
     @inject(tContracts.ILocalLogService)
-    protected logger:ILocalLogService;
+    public logger:ILocalLogService;
 
 }
 

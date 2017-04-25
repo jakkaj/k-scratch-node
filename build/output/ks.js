@@ -15,10 +15,29 @@ class init extends glue_1.glueBase {
     start(argv) {
         return __awaiter(this, void 0, void 0, function* () {
             var booter = this.glue.container.get(ServiceContracts_1.tContracts.IBootService);
-            yield booter.booted(argv);
+            try {
+                var success = yield booter.booted(argv);
+                return success;
+            }
+            catch (e) {
+                throw e;
+            }
         });
     }
 }
 var i = new init();
-i.start(process.argv);
+var logger = i.glue.container.get(ServiceContracts_1.tContracts.ILocalLogService);
+i.start(process.argv).then((e) => {
+    if (e) {
+        logger.logGood("OK");
+    }
+    else {
+        logger.logError("NOT OK");
+        process.exit(1);
+    }
+}).catch((e) => {
+    logger.logError(e);
+    console.error("NOT OK - EXCEPTION");
+    process.exit(1);
+});
 //# sourceMappingURL=ks.js.map
