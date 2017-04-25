@@ -18,3 +18,10 @@ Grab a publish profile from Azure. Click on your funcion's top level menu item a
 
 Copy the publish profile in to a new empty folder. The publish profile can be in an folder up the path, but it's easiest to pop it in the root of your new editing spot. 
 
+You can run ks from the folder where your PubhsSettings are are located (or any child) or you can use the -p option to set a path (absolute or relative).
+
+```
+ks -l -p ~/dev/something
+```
+
+It seems to work on Linux and Windows :P
