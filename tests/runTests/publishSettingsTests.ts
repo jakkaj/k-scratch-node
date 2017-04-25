@@ -23,29 +23,26 @@ class publishSettingsTest extends testBase{
 var tests = new publishSettingsTest();
 
 
-    // var basePath = path.join(__dirname, '..', '..','..','..', 'tests', 'testData');
-    // var pathWithFile = path.join(basePath, 'a', 'ab', 'ac');
-    // console.log(pathWithFile);
-    // tests.testFindFile(pathWithFile).then(
-    //     f =>{
-    //         var t = f;
-    //     }
-    // )
-
-    // process.exit();
-
-
 test('testFindFile', async t => {
     var basePath = path.join(__dirname, '..', '..','..','..', 'tests', 'testData');
     var pathWithFile = path.join(basePath, 'a', 'ab', 'ac');
     var pathWithNone = path.join(basePath, 'b');
-    
+       
+
     var bad1 = await tests.testFindFile(pathWithNone);    
     t.is(bad1, false);    
     
     var good1 = await tests.testFindFile(pathWithFile);    
     t.is(good1, true);    
 
+    var good2 = await tests.testFindFile("tests/testData/a/ab/ac");    
+    t.is(good2, true);    
+    
+    var bad2 = await tests.testFindFile("tests/testData/b");    
+    t.is(bad2, false);
+
+    var bad3 = await tests.testFindFile("tests/testData/a/af");    
+    t.is(bad3, false);    
     
 
     t.pass();

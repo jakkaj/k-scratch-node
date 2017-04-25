@@ -27,6 +27,12 @@ let configService = class configService extends serviceBase_1.serviceBase {
     }
     init(basePath) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!basePath) {
+                basePath = process.cwd().toString();
+            }
+            if (!path.isAbsolute(basePath)) {
+                basePath = path.join(process.cwd().toString(), basePath);
+            }
             this._basePath = basePath;
             if (!this._validatePath(this._basePath)) {
                 this.logger.logError("Path not found " + this._basePath);

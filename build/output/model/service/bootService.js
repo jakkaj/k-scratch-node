@@ -17,7 +17,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
 const inversify_1 = require("inversify");
 require("reflect-metadata");
 const ServiceContracts_1 = require("../contract/ServiceContracts");
@@ -32,7 +31,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
         return __awaiter(this, void 0, void 0, function* () {
             this.argv = argv;
             this._process(argv);
-            var cwdPath = process.cwd().toString();
+            var cwdPath = null;
             if (argv.length === 2) {
                 this._help();
                 return;
@@ -41,12 +40,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
                 console.log("You logged!");
             }
             if (program.path) {
-                if (!path.isAbsolute(program.path)) {
-                    cwdPath = path.join(cwdPath, program.path);
-                }
-                else {
-                    cwdPath = program.path;
-                }
+                cwdPath = program.path;
             }
             this.logger.log("Setting base path [" + cwdPath + "]");
             var initGood = yield this._configService.init(cwdPath);

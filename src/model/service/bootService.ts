@@ -22,7 +22,7 @@ class bootService extends serviceBase implements IBootService {
         this.argv = argv;
         this._process(argv);
 
-        var cwdPath:string = process.cwd().toString();
+        var cwdPath:string = null;
 
         if (argv.length === 2) {
             this._help();
@@ -34,11 +34,7 @@ class bootService extends serviceBase implements IBootService {
         }      
 
         if(program.path){
-            if(!path.isAbsolute(program.path)){
-                cwdPath = path.join(cwdPath, program.path);
-            }else{
-                cwdPath = program.path;
-            }
+             cwdPath = program.path;
         }
 
         this.logger.log("Setting base path [" + cwdPath + "]");

@@ -23,6 +23,15 @@ class configService extends serviceBase implements IConfigService {
     }
 
     public async init(basePath:string) : Promise<boolean>{
+        
+        if(!basePath){
+            basePath = process.cwd().toString();
+        }
+
+        if(!path.isAbsolute(basePath)){
+                basePath = path.join(process.cwd().toString(), basePath);
+        }
+
         this._basePath = basePath;
 
         if(!this._validatePath(this._basePath)){
