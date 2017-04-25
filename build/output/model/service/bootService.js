@@ -37,9 +37,6 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
                 this._help();
                 return;
             }
-            if (program.log) {
-                console.log("You logged!");
-            }
             if (program.path) {
                 cwdPath = program.path;
             }

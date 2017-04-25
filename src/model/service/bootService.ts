@@ -31,11 +31,7 @@ class bootService extends serviceBase implements IBootService {
         if (argv.length === 2) {
             this._help();
             return;
-        }
-
-        if(program.log){
-            console.log("You logged!");
-        }      
+        }              
 
         if(program.path){
              cwdPath = program.path;
