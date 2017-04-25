@@ -1,9 +1,16 @@
-interface IBootService{
+import { publishProfile } from "../entity/publishSettings";
+
+interface IBootService {
     booted(process);    
+}
+
+interface IKuduLogService{
+
 }
 
 interface IConfigService{
     init(basePath:string) : Promise<boolean>;
+    getPublishProfile(profileName:string):publishProfile;
     basePath:string;
 }
 
@@ -19,7 +26,8 @@ interface ILocalLogService{
 let tContracts = {
     IBootService: Symbol("IBootService"),
     IConfigService: Symbol("IConfigService"),
-    ILocalLogService: Symbol("ILocalLogService")
+    ILocalLogService: Symbol("ILocalLogService"),
+    IKuduLogService: Symbol("IKuduLogService")
 }
 
-export {IBootService, IConfigService, ILocalLogService, tContracts};
+export {IBootService, IKuduLogService, IConfigService, ILocalLogService, tContracts};

@@ -11,4 +11,8 @@ interface publishSettings{
     publishProfile: publishProfile[]
 }
 
-export {publishSettings, publishProfile};
+let publishMethods = {
+    msDeploy : "MSDeploy"
+}
+
+export {publishSettings, publishProfile, publishMethods};

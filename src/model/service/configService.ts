@@ -8,7 +8,7 @@ import { injectable, inject } from 'inversify';
 
 import { IConfigService, tContracts, ILocalLogService } from "../contract/ServiceContracts";
 import { serviceBase } from "./serviceBase";
-import { publishSettings } from "../entity/publishSettings";
+import { publishSettings, publishProfile } from "../entity/publishSettings";
 
 
 
@@ -56,6 +56,21 @@ class configService extends serviceBase implements IConfigService {
         this._publishSettings = config;
 
         return true;
+    }
+
+    public getPublishProfile (profileName : string):publishProfile{
+        if(!this._publishSettings){
+            throw 'Publish settings was not initialised in time.'
+        }
+
+        for(var i in this._publishSettings.publishProfile){
+            var p = this._publishSettings.publishProfile[i];            
+            if(p.publishMethod === profileName){
+                return p;
+            }
+        }
+
+        return null;
     }
 
     private _validatePath(p : string):boolean{
