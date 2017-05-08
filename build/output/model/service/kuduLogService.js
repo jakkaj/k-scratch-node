@@ -8,7 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const request = require("request");
-const publishSettings_1 = require("../entity/publishSettings");
 const serviceBase_1 = require("./serviceBase");
 let kuduLogService = class kuduLogService extends serviceBase_1.configBase {
     constructor() {
@@ -19,11 +18,7 @@ let kuduLogService = class kuduLogService extends serviceBase_1.configBase {
         if (this._publishProfile != null) {
             return;
         }
-        var p = this.configService.getPublishProfile(publishSettings_1.publishMethods.msDeploy);
-        if (p == null) {
-            this.logger.logError('Publish method was not found ' + publishSettings_1.publishMethods.msDeploy);
-            throw 'Publish method was not found ' + publishSettings_1.publishMethods.msDeploy;
-        }
+        var p = this.getDefaultConfig();
         this._publishProfile = p;
     }
     startLog() {
@@ -33,6 +28,7 @@ let kuduLogService = class kuduLogService extends serviceBase_1.configBase {
         var url = this._publishProfile.publishUrl;
         var fullUrl = "https://" + url + "/logstream/application";
         var logReq = request.get(fullUrl).auth(user, pass, false);
+        this.logger.log("- Attempting attach to the log stream");
         logReq.on('data', (chunk) => {
             var c = chunk.toString('utf8').trim();
             if (!c || (c && c.length == 0)) {

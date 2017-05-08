@@ -6,7 +6,7 @@ var dest_test = "build/output_test";
 var fs = require('fs');
 
 gulp.task('test',["compile:tests"], function() {
-    return gulp.src(dest_test + '/tests/tests.js')
+    return gulp.src(dest_test + '/tests/runTests/*.js')
     .pipe(ava({verbose: true}));
 });
 

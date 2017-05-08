@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const ServiceContracts_1 = require("../contract/ServiceContracts");
+const publishSettings_1 = require("../entity/publishSettings");
 let serviceBase = class serviceBase {
 };
 __decorate([
@@ -18,6 +19,14 @@ serviceBase = __decorate([
 ], serviceBase);
 exports.serviceBase = serviceBase;
 let configBase = class configBase extends serviceBase {
+    getDefaultConfig() {
+        var p = this.configService.getPublishProfile(publishSettings_1.publishMethods.msDeploy);
+        if (p == null) {
+            this.logger.logError('Publish method was not found ' + publishSettings_1.publishMethods.msDeploy);
+            throw 'Publish method was not found ' + publishSettings_1.publishMethods.msDeploy;
+        }
+        return p;
+    }
 };
 __decorate([
     inversify_1.inject(ServiceContracts_1.tContracts.IConfigService)

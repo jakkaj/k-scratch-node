@@ -8,6 +8,10 @@ interface IKuduLogService{
     startLog();
 }
 
+interface IKuduFileService{
+
+}
+
 interface IConfigService{
     init(basePath:string) : Promise<boolean>;
     getPublishProfile(profileName:string):publishProfile;
@@ -27,7 +31,8 @@ let tContracts = {
     IBootService: Symbol("IBootService"),
     IConfigService: Symbol("IConfigService"),
     ILocalLogService: Symbol("ILocalLogService"),
-    IKuduLogService: Symbol("IKuduLogService")
+    IKuduLogService: Symbol("IKuduLogService"), 
+    IKuduFileService : Symbol("IKuduFileService")
 }
 
-export {IBootService, IKuduLogService, IConfigService, ILocalLogService, tContracts};
+export {IBootService, IKuduLogService, IConfigService, ILocalLogService, IKuduFileService, tContracts};

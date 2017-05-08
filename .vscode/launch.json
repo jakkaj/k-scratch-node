@@ -10,7 +10,8 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-p","C:\\Temp\\func\\funcionplayground\\functions"
+                "-l",
+                "-p","C:\\Temp\\techonemedia\\functemp3"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",
@@ -25,7 +26,7 @@
             "name": "Launch Test",
             "program": "${workspaceRoot}/node_modules/ava/profile.js",
             "args": [
-                "${workspaceRoot}/build/output_test/tests/runTests/publishSettingsTests.js"
+                "${workspaceRoot}/build/output_test/tests/runTests/fileTests.js"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:test",

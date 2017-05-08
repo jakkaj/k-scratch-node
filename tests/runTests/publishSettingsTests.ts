@@ -64,19 +64,19 @@ test('testFindFile', async t => {
        
 
     var bad1 = await tests.testFindFile(pathWithNone);    
-    t.is(bad1, false);    
+    t.is(bad1, false, "bad1");    
     
     var good1 = await tests.testFindFile(pathWithFile);    
-    t.is(good1, true);    
+    t.is(good1, true, "good1");    
 
     var good2 = await tests.testFindFile("tests/testData/a/ab/ac");    
-    t.is(good2, true);    
+    t.is(good2, true, "good2");    
 
     var bad2 = await tests.testFindFile("tests/testData/b");    
-    t.is(bad2, false);
+    t.is(bad2, false, "bad2");
 
-    var bad3 = await tests.testFindFile("tests/testData/a/af");    
-    t.is(bad3, false);    
+    var good3 = await tests.testFindFile("tests/testData/a/af");    
+    t.is(good3, true, "good3");    
     
 
     t.pass();

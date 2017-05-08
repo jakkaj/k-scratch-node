@@ -17,13 +17,8 @@ class kuduLogService extends configBase implements IKuduLogService {
             return;
         }
 
-        var p = this.configService.getPublishProfile(publishMethods.msDeploy);
-
-         if(p == null){
-             this.logger.logError('Publish method was not found ' + publishMethods.msDeploy);
-             throw 'Publish method was not found ' + publishMethods.msDeploy;
-         }    
-
+        var p = this.getDefaultConfig();
+        
          this._publishProfile = p;   
     }
 
@@ -36,6 +31,9 @@ class kuduLogService extends configBase implements IKuduLogService {
         var fullUrl = "https://" + url + "/logstream/application";
 
         var logReq = request.get(fullUrl).auth(user, pass, false);
+
+        this.logger.log("- Attempting attach to the log stream")
+                
 
         logReq.on('data', (chunk)=>{
            var c:string = chunk.toString('utf8').trim();

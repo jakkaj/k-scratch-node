@@ -4,7 +4,8 @@ let tContracts = {
     IBootService: Symbol("IBootService"),
     IConfigService: Symbol("IConfigService"),
     ILocalLogService: Symbol("ILocalLogService"),
-    IKuduLogService: Symbol("IKuduLogService")
+    IKuduLogService: Symbol("IKuduLogService"),
+    IKuduFileService: Symbol("IKuduFileService")
 };
 exports.tContracts = tContracts;
 //# sourceMappingURL=ServiceContracts.js.map
