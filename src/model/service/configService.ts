@@ -34,6 +34,8 @@ class configService extends serviceBase implements IConfigService {
 
         this._basePath = basePath;
 
+        process.chdir(this._basePath);
+
         console.info("[Working Dir] " + this._basePath);
 
         if(!this._validatePath(this._basePath)){

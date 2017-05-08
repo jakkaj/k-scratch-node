@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-l",
+                "-g",
                 "-p","C:\\Temp\\techonemedia\\functemp3"
             ],
             "cwd": "${workspaceRoot}",

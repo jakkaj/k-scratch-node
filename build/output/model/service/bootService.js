@@ -23,10 +23,11 @@ const ServiceContracts_1 = require("../contract/ServiceContracts");
 const program = require("commander");
 const serviceBase_1 = require("./serviceBase");
 let bootService = class bootService extends serviceBase_1.serviceBase {
-    constructor(configService, kuduLogService) {
+    constructor(configService, kuduLogService, kuduFileService) {
         super();
         this._configService = configService;
         this._kuduLogService = kuduLogService;
+        this._kuduFileService = kuduFileService;
     }
     booted(argv) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -44,6 +45,9 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             if (!initGood) {
                 return false;
             }
+            if (program.get) {
+                var getResult = yield this._kuduFileService.getFiles(null);
+            }
             if (program.log) {
                 this._kuduLogService.startLog();
             }
@@ -58,13 +62,15 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             .version("{$version}")
             .option('-l, --log', 'Output the Kudulog stream to the console')
             .option('-p, --path [functionPath]', 'The base path of your function (blank for current path)')
+            .option('-g, --get', 'Download the Function app ready for editing locally')
             .parse(argv);
     }
 };
 bootService = __decorate([
     inversify_1.injectable(),
     __param(0, inversify_1.inject(ServiceContracts_1.tContracts.IConfigService)),
-    __param(1, inversify_1.inject(ServiceContracts_1.tContracts.IKuduLogService))
+    __param(1, inversify_1.inject(ServiceContracts_1.tContracts.IKuduLogService)),
+    __param(2, inversify_1.inject(ServiceContracts_1.tContracts.IKuduFileService))
 ], bootService);
 exports.bootService = bootService;
 //# sourceMappingURL=bootService.js.map

@@ -34,6 +34,7 @@ let configService = class configService extends serviceBase_1.serviceBase {
                 basePath = path.join(process.cwd().toString(), basePath);
             }
             this._basePath = basePath;
+            process.chdir(this._basePath);
             console.info("[Working Dir] " + this._basePath);
             if (!this._validatePath(this._basePath)) {
                 this.logger.logError("Path not found " + this._basePath);

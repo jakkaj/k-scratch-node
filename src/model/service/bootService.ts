@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { injectable, inject } from "inversify";
 import "reflect-metadata";
-import { IBootService, tContracts, IConfigService, IKuduLogService } from "../contract/ServiceContracts";
+import { IBootService, tContracts, IConfigService, IKuduLogService, IKuduFileService } from "../contract/ServiceContracts";
 import * as program from "commander";
 import { serviceBase } from "./serviceBase";
 
@@ -11,15 +11,18 @@ class bootService extends serviceBase implements IBootService {
     
     private _configService : IConfigService;
     private _kuduLogService : IKuduLogService;
+    private _kuduFileService : IKuduFileService;
     private argv;
     
     constructor(
             @inject(tContracts.IConfigService) configService: IConfigService,
-            @inject(tContracts.IKuduLogService) kuduLogService: IKuduLogService
+            @inject(tContracts.IKuduLogService) kuduLogService: IKuduLogService,
+            @inject(tContracts.IKuduFileService) kuduFileService: IKuduFileService
         ){
         super();
         this._configService = configService;
         this._kuduLogService = kuduLogService;
+        this._kuduFileService = kuduFileService;
     }
 
     async booted(argv: any) {
@@ -43,9 +46,14 @@ class bootService extends serviceBase implements IBootService {
             return false;
         }
 
+        if(program.get){
+            var getResult = await this._kuduFileService.getFiles(null);
+        }
+
         if(program.log){
             this._kuduLogService.startLog();
         }
+        
 
         return initGood;
     }
@@ -59,6 +67,7 @@ class bootService extends serviceBase implements IBootService {
             .version("{$version}")
             .option('-l, --log', 'Output the Kudulog stream to the console')
             .option('-p, --path [functionPath]', 'The base path of your function (blank for current path)')
+            .option('-g, --get', 'Download the Function app ready for editing locally')
             .parse(argv);
     }
 }

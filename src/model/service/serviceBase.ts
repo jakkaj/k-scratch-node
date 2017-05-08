@@ -16,6 +16,14 @@ class configBase extends serviceBase {
     @inject(tContracts.IConfigService)
     public configService: IConfigService;
 
+    public publishProfile:publishProfile = null;
+
+    public init(){
+        if(this.publishProfile == null){
+            this.publishProfile = this.getDefaultConfig();
+        }        
+    }
+
     public getDefaultConfig():publishProfile{
         
         var p = this.configService.getPublishProfile(publishMethods.msDeploy);
@@ -27,6 +35,8 @@ class configBase extends serviceBase {
 
          return p;
     }
+
+
 }
 
 export {serviceBase, configBase};

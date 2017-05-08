@@ -19,6 +19,15 @@ serviceBase = __decorate([
 ], serviceBase);
 exports.serviceBase = serviceBase;
 let configBase = class configBase extends serviceBase {
+    constructor() {
+        super(...arguments);
+        this.publishProfile = null;
+    }
+    init() {
+        if (this.publishProfile == null) {
+            this.publishProfile = this.getDefaultConfig();
+        }
+    }
     getDefaultConfig() {
         var p = this.configService.getPublishProfile(publishSettings_1.publishMethods.msDeploy);
         if (p == null) {

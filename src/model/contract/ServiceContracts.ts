@@ -9,7 +9,7 @@ interface IKuduLogService{
 }
 
 interface IKuduFileService{
-
+    getFiles(subPath:string):Promise<boolean>;
 }
 
 interface IConfigService{
