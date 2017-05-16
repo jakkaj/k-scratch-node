@@ -21,7 +21,7 @@ const tmp = require("tmp");
 const path = require("path");
 const del = require("del");
 const unzip = require("unzip-stream");
-const archiver = require("archiver");
+const admzip = require("adm-zip");
 const serviceBase_1 = require("./serviceBase");
 const stringHelpers_1 = require("../helpers/stringHelpers");
 const functionWalk_1 = require("../helpers/functionWalk");
@@ -47,56 +47,48 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     return false;
                 }
                 var output = fs.createWriteStream(tmpFile.name);
-                var archive = archiver('zip', {
-                    zlib: { level: 6 } // Sets the compression level.
-                });
-                output.on('close', () => __awaiter(this, void 0, void 0, function* () {
-                    output.end();
-                    // var len = archive.pointer();
-                    // this.logger.log('[Zipped ' + len + ' bytes]');        
-                    var requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
-                    if (subPath != null && subPath.length > 0) {
-                        subPath = this._stringHelper.trim(subPath, '\\\\/');
-                        requestUri += subPath + "/";
-                    }
-                    this.logger.log(`[Uploading to ${requestUri}]`);
-                    var req = request.put({ url: requestUri, 'proxy': 'http://127.0.0.1:8888', 'rejectUnauthorized': false }).auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
-                    var t = "";
-                    req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
-                        t += data;
-                    }));
-                    req.on('response', (response) => __awaiter(this, void 0, void 0, function* () {
-                        this.logger.logGood(`[Upload ${response.statusCode}]`);
-                        if (response.statusCode > 299) {
-                            this.logger.logWarning(`[Error ${response.statusMessage}]`);
-                        }
-                    }));
-                    req.on('error', (error) => __awaiter(this, void 0, void 0, function* () {
-                        this.logger.logWarning(`[Error ${error}]`);
-                    }));
-                    req.on('end', () => __awaiter(this, void 0, void 0, function* () {
-                        this.logger.logInfo(t);
-                        yield del(tmpFile.name, { force: true });
-                        good(true);
-                    }));
-                    fs.createReadStream(tmpFile.name, { start: 0 }).pipe(fs.createWriteStream(tmpFile.name + ".zip"));
-                    var fStream = fs.createReadStream(tmpFile.name);
-                    fStream.pipe(req);
-                }));
-                archive.on('error', (err) => __awaiter(this, void 0, void 0, function* () {
-                    yield del(tmpFile.name, { force: true });
-                    this.logger.logError(`Zip error: ${err}`);
-                    bad(false);
-                }));
+                var zip = new admzip();
                 var w = new functionWalk_1.functionWalker(dir);
                 var files = yield w.doWalk();
                 this.logger.log("[Zipping]");
                 for (var i in files) {
                     var f = files[i];
-                    archive.append(fs.createReadStream(f.fullName), { name: f.offsetName });
+                    zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
                 }
-                archive.pipe(output);
-                archive.finalize();
+                zip.writeZip(tmpFile.name);
+                var requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
+                if (subPath != null && subPath.length > 0) {
+                    subPath = this._stringHelper.trim(subPath, '\\\\/');
+                    requestUri += subPath + "/";
+                }
+                this.logger.log(`[Uploading to ${requestUri}]`);
+                var uploadConfig = {
+                    url: requestUri,
+                    'proxy': 'http://127.0.0.1:8888',
+                    'rejectUnauthorized': false
+                };
+                var req = request.put(uploadConfig)
+                    .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
+                var t = "";
+                req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
+                    t += data;
+                }));
+                req.on('response', (response) => __awaiter(this, void 0, void 0, function* () {
+                    this.logger.logGood(`[Upload ${response.statusCode}]`);
+                    if (response.statusCode > 299) {
+                        this.logger.logWarning(`[Error ${response.statusMessage}]`);
+                    }
+                }));
+                req.on('error', (error) => __awaiter(this, void 0, void 0, function* () {
+                    this.logger.logWarning(`[Error ${error}]`);
+                }));
+                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
+                    this.logger.logInfo(t);
+                    yield del(tmpFile.name, { force: true });
+                    good(true);
+                }));
+                var fStream = fs.createReadStream(tmpFile.name);
+                req.pipe(fStream);
             }));
         });
     }

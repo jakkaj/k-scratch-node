@@ -11,7 +11,7 @@
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
                 "-u",
-                "-p","C:\\Temp\\techonemedia\\functempupload\\src"
+                "-p","C:\\Temp\\techone\\testupload\\src"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",
