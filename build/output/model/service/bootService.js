@@ -33,6 +33,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
         return __awaiter(this, void 0, void 0, function* () {
             this.argv = argv;
             this._process(argv);
+            var subFolder = null;
             var cwdPath = null;
             if (argv.length === 2) {
                 this._help();
@@ -41,12 +42,18 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             if (program.path) {
                 cwdPath = program.path;
             }
+            if (program.folder) {
+                subFolder = program.folder;
+            }
             var initGood = yield this._configService.init(cwdPath);
             if (!initGood) {
                 return false;
             }
             if (program.get) {
-                var getResult = yield this._kuduFileService.getFiles(null);
+                var getResult = yield this._kuduFileService.getFiles(subFolder);
+            }
+            if (program.upload) {
+                var uploadResult = yield this._kuduFileService.uploadFiles(subFolder);
             }
             if (program.log) {
                 this._kuduLogService.startLog();
@@ -62,7 +69,9 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             .version("{$version}")
             .option('-l, --log', 'Output the Kudulog stream to the console')
             .option('-p, --path [functionPath]', 'The base path of your function (blank for current path)')
-            .option('-g, --get', 'Download the Function app ready for editing locally')
+            .option('-g, --get', 'Download the Function app ready for editing locally. Works with the -f sub folder option')
+            .option('-u, --upload', 'Upload a folder to the server. Works with the -f sub folder option')
+            .option('-f, --folder [folder]', 'Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu')
             .parse(argv);
     }
 };

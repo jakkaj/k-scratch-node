@@ -10,8 +10,8 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-g",
-                "-p","C:\\Temp\\techonemedia\\functemp3"
+                "-u",
+                "-p","C:\\Temp\\techonemedia\\functempupload\\src"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",
