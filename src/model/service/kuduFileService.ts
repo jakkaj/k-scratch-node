@@ -100,7 +100,10 @@ class kuduFileService extends configBase implements IKuduFileService {
             this.logger.log("[Zipping]");
             
             for(var i in files){
-                var f = files[i];                
+                var f = files[i];    
+               if(f.toLowerCase().indexOf("publishsettings")!=-1){
+                   continue;
+               }         
                zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
             }
 
