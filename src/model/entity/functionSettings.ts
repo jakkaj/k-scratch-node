@@ -29,3 +29,5 @@ interface binding{
     subscriptionName:string; 
     accessRights:string;     
 }
+
+export{functionSettings, config, binding}

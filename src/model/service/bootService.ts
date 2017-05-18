@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 import { injectable, inject } from "inversify";
 import "reflect-metadata";
-import { IBootService, tContracts, IConfigService, IKuduLogService, IKuduFileService, IFunctionGraphService } from "../contract/ServiceContracts";
+import { IBootService, tContracts, IConfigService, IKuduLogService, IKuduFileService, IFunctionGraphService, IFunctionTestService } from "../contract/ServiceContracts";
 import * as program from "commander";
 import { serviceBase } from "./serviceBase";
 
@@ -14,19 +14,22 @@ class bootService extends serviceBase implements IBootService {
     private _kuduLogService : IKuduLogService;
     private _kuduFileService : IKuduFileService;
     private _functionGraphService: IFunctionGraphService;
+    private _functionTestService: IFunctionTestService;
     private argv;
     
     constructor(
             @inject(tContracts.IConfigService) configService: IConfigService,
             @inject(tContracts.IKuduLogService) kuduLogService: IKuduLogService,
             @inject(tContracts.IKuduFileService) kuduFileService: IKuduFileService,
-            @inject(tContracts.IFunctionGraphService) functionGraphService: IFunctionGraphService
+            @inject(tContracts.IFunctionGraphService) functionGraphService: IFunctionGraphService,
+            @inject(tContracts.IFunctionTestService) functionTestService: IFunctionTestService
         ){
         super();
         this._configService = configService;
         this._kuduLogService = kuduLogService;
         this._kuduFileService = kuduFileService;
         this._functionGraphService = functionGraphService;
+        this._functionTestService = functionTestService;
     }
 
     async booted(argv: any) {
@@ -37,14 +40,12 @@ class bootService extends serviceBase implements IBootService {
         var cwdPath:string = null;
         var key:string = null;
 
+       
+
         if (argv.length === 2) {
             this._help();
             return;
-        }            
-
-        if(program.key){
-            key = program.key;
-        }        
+        }       
 
         if(program.path){
              cwdPath = program.path;
@@ -78,6 +79,11 @@ class bootService extends serviceBase implements IBootService {
             }else{
                 await this._functionGraphService.buildGraph(program.diagram);
             }            
+        }
+
+        if(program.key){
+            key = program.key;
+            await this._functionTestService.getFunctionData(null);
         }
 
         if(program.log){

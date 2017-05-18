@@ -1,33 +1,89 @@
 import { injectable } from 'inversify';
-import * as request from 'async-request';
+import * as request from 'request';
 
 import { configBase } from "./serviceBase";
-import { IFunctionTestSettings } from "../contract/ServiceContracts";
+import { IFunctionTestService } from "../contract/ServiceContracts";
+import { functionSettings } from "../entity/functionSettings";
 
 @injectable()
-class functionTestSettings extends configBase implements IFunctionTestSettings{
+class functionTestService extends configBase implements IFunctionTestService{
     
+    private funcSettings:Array<functionSettings>;
+
     constructor() {
         super();
         
     }
 
-    async getFunctionData(functionKey: string) : boolean{
+    async getFunctionData(functionKey: string): Promise<boolean>{
         this.init();
         
-        var result = await request.get
+        try{
+
+            this.funcSettings = await this.getFunctionSettings();
+            
+            if(this.funcSettings == null){
+                return false;
+            }
+
+            var count = 1;
+
+            for(var iFunc in this.funcSettings){
+                var func = this.funcSettings[iFunc];
+                
+                if(!func.config || !func.config.bindings){
+                    continue;
+                }     
+
+                for(var iBind in func.config.bindings){
+                    var binding = func.config.bindings[iBind];
+                    if(binding.direction == "in" && binding.type.indexOf("Trigger")!=-1){
+                        this.logger.logInfo(`   (${count}) ${func.name} [${binding.type}]`);                      
+                    }
+                }
+
+                count++;                         
+            }
+
+        }catch(e){
+            return false;
+        }  
+
+        return true;
     }
 
-    async getFunctionSettings():Promise<functionSettings>{
+    async getFunctionSettings(): Promise<Array<functionSettings>>{
 
-        var siteSettings = this.getDefaultConfig();
-        var requestUri = `https://${siteSettings.publishUrl}/api/functions`;
+        return new Promise<Array<functionSettings>>((good, bad)=>{
+            var siteSettings = this.getDefaultConfig();
+            
+            var requestUri = `https://${siteSettings.publishUrl}/api/functions`;
 
-        var result = await request.get(requestUri).auth(siteSettings.userName, siteSettings.userPWD, false);
+            var req = request.get(requestUri).auth(siteSettings.userName, siteSettings.userPWD, false);
+            var result:string = "";
+            var isGood:boolean = false;
 
-        var funcSettings:functionSettings = JSON.parse(result);
+            req.on('data', async (data)=>{
+                result+=data;
+            });
 
-        return funcSettings;
+            req.on('response', async (response)=>{                
+                if(response.statusCode > 299){
+                    this.logger.logWarning(`[Error ${response.statusMessage}]`);                     
+                }else{
+                    isGood = true;
+                }                
+            });
+
+            req.on('end', ()=>{
+                if(isGood){
+                    var funcSettings:Array<functionSettings> = JSON.parse(result);
+                    good(funcSettings);
+                }else{
+                    bad("Could not get the func settings");
+                }                
+            });            
+        });        
     }
 
     /*
@@ -45,3 +101,5 @@ public async Task<List<FunctionSettings>> GetFunctionSettings()
 
     */
 }
+
+export {functionTestService};

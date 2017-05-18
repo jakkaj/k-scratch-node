@@ -23,12 +23,13 @@ const ServiceContracts_1 = require("../contract/ServiceContracts");
 const program = require("commander");
 const serviceBase_1 = require("./serviceBase");
 let bootService = class bootService extends serviceBase_1.serviceBase {
-    constructor(configService, kuduLogService, kuduFileService, functionGraphService) {
+    constructor(configService, kuduLogService, kuduFileService, functionGraphService, functionTestService) {
         super();
         this._configService = configService;
         this._kuduLogService = kuduLogService;
         this._kuduFileService = kuduFileService;
         this._functionGraphService = functionGraphService;
+        this._functionTestService = functionTestService;
     }
     booted(argv) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,9 +41,6 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             if (argv.length === 2) {
                 this._help();
                 return;
-            }
-            if (program.key) {
-                key = program.key;
             }
             if (program.path) {
                 cwdPath = program.path;
@@ -70,6 +68,10 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
                 else {
                     yield this._functionGraphService.buildGraph(program.diagram);
                 }
+            }
+            if (program.key) {
+                key = program.key;
+                yield this._functionTestService.getFunctionData(null);
             }
             if (program.log) {
                 this._kuduLogService.startLog();
@@ -103,7 +105,8 @@ bootService = __decorate([
     __param(0, inversify_1.inject(ServiceContracts_1.tContracts.IConfigService)),
     __param(1, inversify_1.inject(ServiceContracts_1.tContracts.IKuduLogService)),
     __param(2, inversify_1.inject(ServiceContracts_1.tContracts.IKuduFileService)),
-    __param(3, inversify_1.inject(ServiceContracts_1.tContracts.IFunctionGraphService))
+    __param(3, inversify_1.inject(ServiceContracts_1.tContracts.IFunctionGraphService)),
+    __param(4, inversify_1.inject(ServiceContracts_1.tContracts.IFunctionTestService))
 ], bootService);
 exports.bootService = bootService;
 //# sourceMappingURL=bootService.js.map

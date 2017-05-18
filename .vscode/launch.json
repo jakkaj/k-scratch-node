@@ -10,7 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-d","C:\\Temp\\videoIngestion\\diag.svg",               
+                "-k", "somekey",                
                 "-p","C:\\Temp\\videoIngestion\\src"
             ],
             "cwd": "${workspaceRoot}",

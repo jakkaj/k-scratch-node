@@ -60,6 +60,10 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     this.logger.logWarning(`Upload failed -> file not found ${file}`);
                     bad(`Upload failed`);
                 }
+                if (file.toLowerCase().indexOf("publishsettings") != -1) {
+                    this.logger.logWarning(`Upload failed -> will not upload publish settings ${file}`);
+                    bad(`Upload failed`);
+                }
                 try {
                     var result = yield this._doUpload(file, false, subPath);
                 }
@@ -92,6 +96,9 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                 this.logger.log("[Zipping]");
                 for (var i in files) {
                     var f = files[i];
+                    if (f.toLowerCase().indexOf("publishsettings") != -1) {
+                        continue;
+                    }
                     zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
                 }
                 zip.writeZip(tmpFile.name);

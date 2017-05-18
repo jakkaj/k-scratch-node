@@ -1,7 +1,9 @@
 import { publishProfile } from "../entity/publishSettings";
+import { functionSettings } from "../entity/functionSettings";
 
-interface IFunctionTestSettings{
-    getFunctionSettings():Promise<functionSettings>;
+interface IFunctionTestService{
+    getFunctionSettings():Promise<Array<functionSettings>>
+    getFunctionData(functionKey:string):Promise<boolean>;
 }
 
 interface IBootService {
@@ -44,12 +46,12 @@ let tContracts = {
     IConfigService: Symbol("IConfigService"),
     ILocalLogService: Symbol("ILocalLogService"),
     IKuduLogService: Symbol("IKuduLogService"), 
-    IFunctionGraphService : Symbol("IFunctionGraphService")
+    IFunctionGraphService : Symbol("IFunctionGraphService"),
     IKuduFileService : Symbol("IKuduFileService"),
-    IFunctionTestSettings : Symbol("IFunctionTestSettings")
+    IFunctionTestService : Symbol("IFunctionTestService")
 }
 
 export {
     IBootService, IKuduLogService, IConfigService, ILocalLogService,
-    IKuduFileService, IFunctionGraphService, IFunctionTestSettings, tContracts
+    IKuduFileService, IFunctionGraphService, IFunctionTestService, tContracts
 };
