@@ -31,11 +31,16 @@ class bootService extends serviceBase implements IBootService {
 
         var subFolder:string = null;
         var cwdPath:string = null;
+        var key:string = null;
 
         if (argv.length === 2) {
             this._help();
             return;
-        }              
+        }      
+
+        if(program.key){
+            key = program.key;
+        }        
 
         if(program.path){
              cwdPath = program.path;
@@ -59,7 +64,7 @@ class bootService extends serviceBase implements IBootService {
             var uploadResult = await this._kuduFileService.uploadFiles(subFolder);
         }
 
-        if(program.kudu){
+        if(program.scm){
             this._configService.openKuduSite();
         }
 
@@ -88,7 +93,9 @@ class bootService extends serviceBase implements IBootService {
             .option('-g, --get', 'Download the Function app ready for editing locally. Works with the -f sub folder option')
             .option('-u, --upload', 'Upload a folder to the server. Works with the -f sub folder option')
             .option('-f, --folder [folder]', 'Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu')
-            .option('-k, --kudu', 'Open the Kudu site')
+            .option('-s, --scm', 'Open the Kudu Scm Site')
+            .option('-k, --key [key]', 'Function key for use when calling test endpoints')
+            .option('-d, --diagramPath [path]', 'Create a diagram of the function and save it to the file parameter')
             .parse(argv);
     }
 }

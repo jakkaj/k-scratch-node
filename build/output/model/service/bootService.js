@@ -35,9 +35,13 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             this._process(argv);
             var subFolder = null;
             var cwdPath = null;
+            var key = null;
             if (argv.length === 2) {
                 this._help();
                 return;
+            }
+            if (program.key) {
+                key = program.key;
             }
             if (program.path) {
                 cwdPath = program.path;
@@ -55,7 +59,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             if (program.upload) {
                 var uploadResult = yield this._kuduFileService.uploadFiles(subFolder);
             }
-            if (program.kudu) {
+            if (program.scm) {
                 this._configService.openKuduSite();
             }
             if (program.log) {
@@ -79,7 +83,8 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             .option('-g, --get', 'Download the Function app ready for editing locally. Works with the -f sub folder option')
             .option('-u, --upload', 'Upload a folder to the server. Works with the -f sub folder option')
             .option('-f, --folder [folder]', 'Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu')
-            .option('-k, --kudu', 'Open the Kudu site')
+            .option('-s, --scm', 'Open the Kudu Scm Site')
+            .option('-k, --key [key]', 'Function key for use when calling test endpoints')
             .parse(argv);
     }
 };
