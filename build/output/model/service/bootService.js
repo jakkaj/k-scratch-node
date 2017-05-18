@@ -71,7 +71,8 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             }
             if (program.key) {
                 key = program.key;
-                yield this._functionTestService.getFunctionData(null);
+                yield this._functionTestService.getFunctionData(program.key);
+                yield this._functionTestService.runTest(6);
             }
             if (program.log) {
                 this._kuduLogService.startLog();

@@ -4,6 +4,7 @@ import { functionSettings } from "../entity/functionSettings";
 interface IFunctionTestService{
     getFunctionSettings():Promise<Array<functionSettings>>
     getFunctionData(functionKey:string):Promise<boolean>;
+    runTest(testNumber:number):Promise<boolean>;
 }
 
 interface IBootService {

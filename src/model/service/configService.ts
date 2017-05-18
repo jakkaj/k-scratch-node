@@ -4,7 +4,7 @@ import * as afs from 'async-file';
 import * as path from 'path';
 import * as opn from 'opn';
 import * as xml2js from 'xml2js';
-
+import * as request from 'request';
 
 import { injectable, inject } from 'inversify';
 
@@ -170,7 +170,6 @@ class configService extends serviceBase implements IConfigService {
     get basePath():string{
         return this._basePath;
     }
-
 }
 
 export {configService};

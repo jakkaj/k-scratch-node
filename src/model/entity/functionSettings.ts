@@ -30,4 +30,19 @@ interface binding{
     accessRights:string;     
 }
 
-export{functionSettings, config, binding}
+interface nameValuePair
+{
+    name:string;
+    value:string;
+}
+
+interface testDataConfig
+{
+    availableMethods:Array<any>;
+    queryStringParams:Array<nameValuePair>;
+    headers:Array<nameValuePair>;
+    method:string;
+    body:string;
+}
+
+export{functionSettings, config, binding, nameValuePair, testDataConfig};

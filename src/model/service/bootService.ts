@@ -38,9 +38,7 @@ class bootService extends serviceBase implements IBootService {
 
         var subFolder:string = null;
         var cwdPath:string = null;
-        var key:string = null;
-
-       
+        var key:string = null;       
 
         if (argv.length === 2) {
             this._help();
@@ -83,7 +81,8 @@ class bootService extends serviceBase implements IBootService {
 
         if(program.key){
             key = program.key;
-            await this._functionTestService.getFunctionData(null);
+            await this._functionTestService.getFunctionData(program.key);
+            await this._functionTestService.runTest(6);
         }
 
         if(program.log){
@@ -92,8 +91,7 @@ class bootService extends serviceBase implements IBootService {
 
         if(program.monitor){
             this._kuduFileService.monitor();
-        }
-        
+        }        
 
         return initGood;
     }

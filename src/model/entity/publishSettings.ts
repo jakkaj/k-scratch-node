@@ -5,6 +5,7 @@ interface publishProfile{
     msdeploySite : string;
     userName : string;
     userPWD: string;
+    destinationAppUrl: string;
 }
 
 interface publishSettings{

@@ -1,4 +1,5 @@
 import { injectable, inject } from 'inversify';
+import * as request from 'request';
 
 import { ILocalLogService, tContracts, IConfigService } from "../contract/ServiceContracts";
 import { publishProfile, publishMethods } from "../entity/publishSettings";
@@ -34,6 +35,40 @@ class configBase extends serviceBase {
          }    
 
          return p;
+    }
+
+    public async get(requestUri:string, config?:{}):Promise<string>{
+        
+        var siteSettings = this.getDefaultConfig();        
+        if(!config){
+            config = {};
+        }
+        return new Promise<string>((good, bad)=>{
+            var req = request.get(requestUri, config).auth(siteSettings.userName, siteSettings.userPWD, false);
+            var result:string = "";
+            var isGood:boolean = false;
+
+            req.on('data', async (data)=>{
+                result+=data;
+            });
+
+            req.on('response', async (response)=>{                
+                if(response.statusCode > 299){
+                    this.logger.logWarning(`[Error ${response.statusMessage}]`);                     
+                }else{
+                    isGood = true;
+                }                
+            });
+
+            req.on('end', ()=>{
+                if(isGood){                   
+                    good(result);
+                }else{
+                    bad("Could not get the func settings");
+                }                
+            });
+        });
+            
     }
 
 

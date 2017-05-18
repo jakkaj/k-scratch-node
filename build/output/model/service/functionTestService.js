@@ -15,15 +15,61 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
-const request = require("request");
 const serviceBase_1 = require("./serviceBase");
 let functionTestService = class functionTestService extends serviceBase_1.configBase {
     constructor() {
         super();
+        this.settingsMatch = [];
+    }
+    runTest(testNumber) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((good, bad) => __awaiter(this, void 0, void 0, function* () {
+                if (!this.settingsMatch) {
+                    this.logger.logError("No settings found to run remote testing");
+                    bad(false);
+                }
+                if (this.settingsMatch.length < testNumber) {
+                    this.logger.logWarning("Setting number is out of range");
+                    bad(false);
+                }
+                var setting = this.settingsMatch[testNumber - 1];
+                var siteSettings = this.getDefaultConfig();
+                if (setting[1].type == "httpTrigger") {
+                    var confRaw = setting[0].test_data == "" ? "{}" : setting[0].test_data;
+                    var conf = JSON.parse(confRaw);
+                    var urlBase = `${siteSettings.destinationAppUrl}/api/${setting[0].name}?`;
+                    if (conf.queryStringParams) {
+                        for (var iQs in conf.queryStringParams) {
+                            var qs = conf.queryStringParams[iQs];
+                            urlBase += `${encodeURI(qs.name)}=${encodeURI(qs.value)}&`;
+                        }
+                    }
+                    try {
+                        var key = yield this.getKey(siteSettings, setting[0]);
+                        urlBase += `code=${key}`;
+                    }
+                    catch (e) {
+                        this.logger.log("There was a problem getting the function admin key");
+                        bad(false);
+                    }
+                }
+                else {
+                }
+            }));
+        });
+    }
+    getKey(siteSettings, functionSettings) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var requestUri = `${siteSettings.destinationAppUrl.replace("http", "https")}/admin/functions/${functionSettings.name}/keys`;
+            var headers = { 'x-functions-key': this.key };
+            var result = yield this.get(requestUri, { headers: headers });
+            return result;
+        });
     }
     getFunctionData(functionKey) {
         return __awaiter(this, void 0, void 0, function* () {
             this.init();
+            this.key = functionKey;
             try {
                 this.funcSettings = yield this.getFunctionSettings();
                 if (this.funcSettings == null) {
@@ -39,6 +85,7 @@ let functionTestService = class functionTestService extends serviceBase_1.config
                         var binding = func.config.bindings[iBind];
                         if (binding.direction == "in" && binding.type.indexOf("Trigger") != -1) {
                             this.logger.logInfo(`   (${count}) ${func.name} [${binding.type}]`);
+                            this.settingsMatch.push([func, binding]);
                         }
                     }
                     count++;
@@ -52,33 +99,18 @@ let functionTestService = class functionTestService extends serviceBase_1.config
     }
     getFunctionSettings() {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((good, bad) => {
+            return new Promise((good, bad) => __awaiter(this, void 0, void 0, function* () {
                 var siteSettings = this.getDefaultConfig();
                 var requestUri = `https://${siteSettings.publishUrl}/api/functions`;
-                var req = request.get(requestUri).auth(siteSettings.userName, siteSettings.userPWD, false);
-                var result = "";
-                var isGood = false;
-                req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
-                    result += data;
-                }));
-                req.on('response', (response) => __awaiter(this, void 0, void 0, function* () {
-                    if (response.statusCode > 299) {
-                        this.logger.logWarning(`[Error ${response.statusMessage}]`);
-                    }
-                    else {
-                        isGood = true;
-                    }
-                }));
-                req.on('end', () => {
-                    if (isGood) {
-                        var funcSettings = JSON.parse(result);
-                        good(funcSettings);
-                    }
-                    else {
-                        bad("Could not get the func settings");
-                    }
-                });
-            });
+                try {
+                    var result = yield this.get(requestUri);
+                    var funcSettings = JSON.parse(result);
+                    good(funcSettings);
+                }
+                catch (e) {
+                    bad(false);
+                }
+            }));
         });
     }
 };
