@@ -56,6 +56,7 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
                 }
                 zip.writeZip(tmpFile.name);
+                var len = fs.statSync(tmpFile.name).size;
                 var requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
                 if (subPath != null && subPath.length > 0) {
                     subPath = this._stringHelper.trim(subPath, '\\\\/');
@@ -65,10 +66,15 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                 var uploadConfig = {
                     url: requestUri,
                     'proxy': 'http://127.0.0.1:8888',
-                    'rejectUnauthorized': false
+                    'rejectUnauthorized': false,
+                    headers: {
+                        "Content-Length": len
+                    }
                 };
+                var fStream = fs.createReadStream(tmpFile.name);
                 var req = request.put(uploadConfig)
-                    .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
+                    .auth(this.publishProfile.userName, this.publishProfile.userPWD, false)
+                    .pipe(fStream);
                 var t = "";
                 req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
                     t += data;
@@ -87,8 +93,7 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     yield del(tmpFile.name, { force: true });
                     good(true);
                 }));
-                var fStream = fs.createReadStream(tmpFile.name);
-                req.pipe(fStream);
+                //req.pipe(fStream);
             }));
         });
     }

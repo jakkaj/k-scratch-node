@@ -62,6 +62,8 @@ class kuduFileService extends configBase implements IKuduFileService {
 
             zip.writeZip(tmpFile.name);            
            
+            var len = fs.statSync(tmpFile.name).size;
+
             var requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
             
             if (subPath != null && subPath.length > 0)
@@ -75,11 +77,17 @@ class kuduFileService extends configBase implements IKuduFileService {
             var uploadConfig = {
                 url: requestUri, 
                 'proxy': 'http://127.0.0.1:8888', 
-                'rejectUnauthorized': false                
+                'rejectUnauthorized': false, 
+                headers:{
+                    "Content-Length": len
+                }              
             }
 
-            var req = request.put(uploadConfig)
-                .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);  
+            var fStream = fs.createReadStream(tmpFile.name);                     
+
+            var req = request.put(uploadConfig)                
+                .auth(this.publishProfile.userName, this.publishProfile.userPWD, false)
+                .pipe(fStream);
             var t = "";
             
             req.on('data', async (data)=>{
@@ -104,9 +112,9 @@ class kuduFileService extends configBase implements IKuduFileService {
                 good(true);               
             })  
 
-            var fStream = fs.createReadStream(tmpFile.name);                     
             
-            req.pipe(fStream);
+            
+            //req.pipe(fStream);
             
         
         });
