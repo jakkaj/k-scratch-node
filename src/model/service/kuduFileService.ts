@@ -7,7 +7,6 @@ import * as del from "del";
 import * as unzip from "unzip-stream";
 import * as admzip from "adm-zip";
 
-
 import { IKuduFileService, tContracts, IConfigService } from "../contract/ServiceContracts";
 import { publishProfile, publishMethods } from "../entity/publishSettings";
 import { serviceBase, configBase } from "./serviceBase";
@@ -23,7 +22,7 @@ class kuduFileService extends configBase implements IKuduFileService {
         super();
 
         this._stringHelper = new stringHelpers();       
-    }
+    }    
 
     async uploadFiles(subPath:string):Promise<boolean>{
         this.init();

@@ -2,13 +2,15 @@
 import * as fs from 'fs';
 import * as afs from 'async-file';
 import * as path from 'path';
-
+import * as opn from 'opn';
 import * as xml2js from 'xml2js';
+
+
 import { injectable, inject } from 'inversify';
 
 import { IConfigService, tContracts, ILocalLogService } from "../contract/ServiceContracts";
 import { serviceBase } from "./serviceBase";
-import { publishSettings, publishProfile } from "../entity/publishSettings";
+import { publishSettings, publishProfile, publishMethods } from "../entity/publishSettings";
 
 
 
@@ -75,6 +77,12 @@ class configService extends serviceBase implements IConfigService {
         }
 
         return null;
+    }
+
+    openKuduSite(){
+        var profile = this.getPublishProfile(publishMethods.msDeploy);
+        var requestUri = `https://${profile.publishUrl}/`;
+        opn(requestUri);
     }
 
     private _validatePath(p : string):boolean{

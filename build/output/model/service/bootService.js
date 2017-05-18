@@ -55,6 +55,9 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             if (program.upload) {
                 var uploadResult = yield this._kuduFileService.uploadFiles(subFolder);
             }
+            if (program.kudu) {
+                this._configService.openKuduSite();
+            }
             if (program.log) {
                 this._kuduLogService.startLog();
             }
@@ -72,6 +75,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             .option('-g, --get', 'Download the Function app ready for editing locally. Works with the -f sub folder option')
             .option('-u, --upload', 'Upload a folder to the server. Works with the -f sub folder option')
             .option('-f, --folder [folder]', 'Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu')
+            .option('-k, --kudu', 'Open the Kudu site')
             .parse(argv);
     }
 };

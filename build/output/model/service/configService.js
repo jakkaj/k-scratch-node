@@ -17,9 +17,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const afs = require("async-file");
 const path = require("path");
+const opn = require("opn");
 const xml2js = require("xml2js");
 const inversify_1 = require("inversify");
 const serviceBase_1 = require("./serviceBase");
+const publishSettings_1 = require("../entity/publishSettings");
 let configService = class configService extends serviceBase_1.serviceBase {
     constructor() {
         super();
@@ -65,6 +67,11 @@ let configService = class configService extends serviceBase_1.serviceBase {
             }
         }
         return null;
+    }
+    openKuduSite() {
+        var profile = this.getPublishProfile(publishSettings_1.publishMethods.msDeploy);
+        var requestUri = `https://${profile.publishUrl}/`;
+        opn(requestUri);
     }
     _validatePath(p) {
         var pathExists = fs.existsSync(p);
