@@ -8,6 +8,7 @@ const configService_1 = require("../model/service/configService");
 const localLogService_1 = require("../model/service/localLogService");
 const kuduLogService_1 = require("../model/service/kuduLogService");
 const kuduFileService_1 = require("../model/service/kuduFileService");
+const functionGraphSevice_1 = require("../model/service/functionGraphSevice");
 class glue {
     constructor() {
         this.container = new inversify_1.Container();
@@ -16,6 +17,7 @@ class glue {
         this.container.bind(ServiceContracts_1.tContracts.ILocalLogService).to(localLogService_1.localLogService).inSingletonScope();
         this.container.bind(ServiceContracts_1.tContracts.IKuduLogService).to(kuduLogService_1.kuduLogService).inSingletonScope();
         this.container.bind(ServiceContracts_1.tContracts.IKuduFileService).to(kuduFileService_1.kuduFileService).inSingletonScope();
+        this.container.bind(ServiceContracts_1.tContracts.IFunctionGraphService).to(functionGraphSevice_1.functionGraphService).inSingletonScope();
     }
 }
 exports.glue = glue;

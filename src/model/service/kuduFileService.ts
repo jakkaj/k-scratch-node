@@ -56,6 +56,11 @@ class kuduFileService extends configBase implements IKuduFileService {
                 bad(`Upload failed`)
             }
 
+            if(file.toLowerCase().indexOf("publishsettings")!=-1){
+                 this.logger.logWarning(`Upload failed -> will not upload publish settings ${file}`);
+                 bad(`Upload failed`)
+            }
+
             try{
                 var result = await this._doUpload(file,false, subPath);                
             } catch(e){
@@ -95,7 +100,10 @@ class kuduFileService extends configBase implements IKuduFileService {
             this.logger.log("[Zipping]");
             
             for(var i in files){
-                var f = files[i];                
+                var f = files[i];    
+               if(f.toLowerCase().indexOf("publishsettings")!=-1){
+                   continue;
+               }         
                zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
             }
 
@@ -196,6 +204,8 @@ class kuduFileService extends configBase implements IKuduFileService {
                 subPath = this._stringHelper.trim(subPath, '\\\\/');
                 requestUri += subPath + "/";
             }
+
+            this.logger.log(`[Downloading] -> ${requestUri}`);
 
             var req = request.get(requestUri).auth(this.publishProfile.userName, this.publishProfile.userPWD, false);        
             

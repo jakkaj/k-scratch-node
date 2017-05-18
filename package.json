@@ -1,7 +1,7 @@
 {
-  "name": "k-scratch-node",
-  "version": "1.0.0",
-  "description": "kscratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping",
+  "name": "k-scratch",
+  "version": "0.0.3",
+  "description": "K-Scratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping",
   "main": "build/output/ks.js",
   "bin": {
     "ks": "build/output/ks.js"
@@ -50,6 +50,7 @@
     "request": "^2.81.0",
     "tmp": "0.0.31",
     "unzip-stream": "^0.1.2",
+    "viz.js": "^1.7.1",
     "walk": "^2.3.9",
     "watch": "^1.0.2",
     "xml2js": "^0.4.17"

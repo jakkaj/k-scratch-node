@@ -10,9 +10,8 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-m",
-                "-l",
-                "-p","C:\\Temp\\techone\\testupload\\src"
+                "-d","C:\\Temp\\videoIngestion\\diag.svg",               
+                "-p","C:\\Temp\\videoIngestion\\src"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",

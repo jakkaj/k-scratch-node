@@ -23,11 +23,12 @@ const ServiceContracts_1 = require("../contract/ServiceContracts");
 const program = require("commander");
 const serviceBase_1 = require("./serviceBase");
 let bootService = class bootService extends serviceBase_1.serviceBase {
-    constructor(configService, kuduLogService, kuduFileService) {
+    constructor(configService, kuduLogService, kuduFileService, functionGraphService) {
         super();
         this._configService = configService;
         this._kuduLogService = kuduLogService;
         this._kuduFileService = kuduFileService;
+        this._functionGraphService = functionGraphService;
     }
     booted(argv) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -62,6 +63,14 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             if (program.scm) {
                 this._configService.openKuduSite();
             }
+            if (program.diagram) {
+                if (program.diagram === true) {
+                    this.logger.logWarning('Diagram requested, but not save path given');
+                }
+                else {
+                    yield this._functionGraphService.buildGraph(program.diagram);
+                }
+            }
             if (program.log) {
                 this._kuduLogService.startLog();
             }
@@ -85,6 +94,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             .option('-f, --folder [folder]', 'Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu')
             .option('-s, --scm', 'Open the Kudu Scm Site')
             .option('-k, --key [key]', 'Function key for use when calling test endpoints')
+            .option('-d, --diagram [path]', 'Create a diagram of the function and save it to the file parameter')
             .parse(argv);
     }
 };
@@ -92,7 +102,8 @@ bootService = __decorate([
     inversify_1.injectable(),
     __param(0, inversify_1.inject(ServiceContracts_1.tContracts.IConfigService)),
     __param(1, inversify_1.inject(ServiceContracts_1.tContracts.IKuduLogService)),
-    __param(2, inversify_1.inject(ServiceContracts_1.tContracts.IKuduFileService))
+    __param(2, inversify_1.inject(ServiceContracts_1.tContracts.IKuduFileService)),
+    __param(3, inversify_1.inject(ServiceContracts_1.tContracts.IFunctionGraphService))
 ], bootService);
 exports.bootService = bootService;
 //# sourceMappingURL=bootService.js.map

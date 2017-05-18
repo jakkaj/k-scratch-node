@@ -1,8 +1,9 @@
 import * as path from 'path';
+import * as fs from 'fs';
 
 import { injectable, inject } from "inversify";
 import "reflect-metadata";
-import { IBootService, tContracts, IConfigService, IKuduLogService, IKuduFileService } from "../contract/ServiceContracts";
+import { IBootService, tContracts, IConfigService, IKuduLogService, IKuduFileService, IFunctionGraphService } from "../contract/ServiceContracts";
 import * as program from "commander";
 import { serviceBase } from "./serviceBase";
 
@@ -12,17 +13,20 @@ class bootService extends serviceBase implements IBootService {
     private _configService : IConfigService;
     private _kuduLogService : IKuduLogService;
     private _kuduFileService : IKuduFileService;
+    private _functionGraphService: IFunctionGraphService;
     private argv;
     
     constructor(
             @inject(tContracts.IConfigService) configService: IConfigService,
             @inject(tContracts.IKuduLogService) kuduLogService: IKuduLogService,
-            @inject(tContracts.IKuduFileService) kuduFileService: IKuduFileService
+            @inject(tContracts.IKuduFileService) kuduFileService: IKuduFileService,
+            @inject(tContracts.IFunctionGraphService) functionGraphService: IFunctionGraphService
         ){
         super();
         this._configService = configService;
         this._kuduLogService = kuduLogService;
         this._kuduFileService = kuduFileService;
+        this._functionGraphService = functionGraphService;
     }
 
     async booted(argv: any) {
@@ -36,7 +40,7 @@ class bootService extends serviceBase implements IBootService {
         if (argv.length === 2) {
             this._help();
             return;
-        }      
+        }            
 
         if(program.key){
             key = program.key;
@@ -44,7 +48,7 @@ class bootService extends serviceBase implements IBootService {
 
         if(program.path){
              cwdPath = program.path;
-        }    
+        }          
 
         if(program.folder){
             subFolder = program.folder;
@@ -66,6 +70,14 @@ class bootService extends serviceBase implements IBootService {
 
         if(program.scm){
             this._configService.openKuduSite();
+        }
+
+        if(program.diagram){
+            if(program.diagram === true){
+                this.logger.logWarning('Diagram requested, but not save path given');
+            }else{
+                await this._functionGraphService.buildGraph(program.diagram);
+            }            
         }
 
         if(program.log){
@@ -95,7 +107,7 @@ class bootService extends serviceBase implements IBootService {
             .option('-f, --folder [folder]', 'Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu')
             .option('-s, --scm', 'Open the Kudu Scm Site')
             .option('-k, --key [key]', 'Function key for use when calling test endpoints')
-            .option('-d, --diagramPath [path]', 'Create a diagram of the function and save it to the file parameter')
+            .option('-d, --diagram [path]', 'Create a diagram of the function and save it to the file parameter')
             .parse(argv);
     }
 }

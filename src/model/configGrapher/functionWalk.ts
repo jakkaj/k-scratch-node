@@ -4,21 +4,18 @@ import * as walkerClass from "walk";
 import * as path from "path";
 import * as fs from "fs";
 
-import {stringHelpers} from "./stringHelpers";
-
 class functionWalker{
     private path:string;
     private walker:any;
-    private stringHelper:any;
+
     constructor(path:string){
         this.path = path;
         this.walker = walkerClass.walk(path);
-        this.stringHelper = new stringHelpers();       
     }
 
-    public doWalk():Promise<Array<any>>{     
+    public doWalk():Promise<Array<string>>{                    
 
-            var pusher:Array<{}> = [];
+            var pusher:Array<string> = [];
             
             return new Promise((good, bad) => {
             
@@ -28,11 +25,26 @@ class functionWalker{
                     var folderSplit = root.split(path.sep);
                     var folderName = folderSplit[folderSplit.length - 1];
 
-                    next();
+                    if(name.indexOf("function.json")!= -1){                                      
+                        
 
-                    var offsetName = name.replace(this.path, '')
-                    offsetName = this.stringHelper.trim(offsetName, '\\\\/');
-                    pusher.push({'fullName': name, 'offsetName':offsetName});
+                        fs.readFile(name, {encoding: 'utf-8'}, (err, buffer) =>{
+                            if(!err && buffer.indexOf("{")!= -1){                       
+                                
+                                var data = JSON.parse(buffer.trim());
+                                data.funcName = folderName;
+                                data.bindings.forEach((binding)=>{
+                                    binding.funcName = folderName;
+                                });
+                                pusher.push(data);
+                            }
+                            
+                            next();
+
+                        });
+                    }else{
+                        next();
+                    }            
                 });
 
                 this.walker.on("errors", function (root, nodeStatsArray, next) {

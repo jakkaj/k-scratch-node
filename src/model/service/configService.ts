@@ -36,9 +36,16 @@ class configService extends serviceBase implements IConfigService {
 
         this._basePath = basePath;
 
+        this.logger.logInfo("[Working Dir] -> " + this._basePath);
+        if(!fs.existsSync(this._basePath)){
+            this.logger.logError(`[Path does not exist] -> ${this._basePath}`);
+            return false;
+        }
+
         process.chdir(this._basePath);
 
-        console.info("[Working Dir] " + this._basePath);
+       
+
 
         if(!this._validatePath(this._basePath)){
             this.logger.logError("Path not found " + this._basePath);
