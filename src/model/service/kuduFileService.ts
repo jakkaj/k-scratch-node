@@ -56,6 +56,11 @@ class kuduFileService extends configBase implements IKuduFileService {
                 bad(`Upload failed`)
             }
 
+            if(file.toLowerCase().indexOf("publishsettings")!=-1){
+                 this.logger.logWarning(`Upload failed -> will not upload publish settings ${file}`);
+                 bad(`Upload failed`)
+            }
+
             try{
                 var result = await this._doUpload(file,false, subPath);                
             } catch(e){
