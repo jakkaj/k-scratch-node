@@ -66,6 +66,10 @@ class bootService extends serviceBase implements IBootService {
         if(program.log){
             this._kuduLogService.startLog();
         }
+
+        if(program.monitor){
+            this._kuduFileService.monitor();
+        }
         
 
         return initGood;
@@ -80,6 +84,7 @@ class bootService extends serviceBase implements IBootService {
             .version("{$version}")
             .option('-l, --log', 'Output the Kudulog stream to the console')
             .option('-p, --path [functionPath]', 'The base path of your function (blank for current path)')
+            .option('-m, --monitor', 'Monitor the path for changes and send them up')
             .option('-g, --get', 'Download the Function app ready for editing locally. Works with the -f sub folder option')
             .option('-u, --upload', 'Upload a folder to the server. Works with the -f sub folder option')
             .option('-f, --folder [folder]', 'Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu')

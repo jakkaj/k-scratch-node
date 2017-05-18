@@ -12,6 +12,7 @@ interface IKuduFileService{
     getFiles(subPath:string):Promise<boolean>;
     uploadFiles(subPath:string):Promise<boolean>;
     uploadFile(file:string, subPath:string):Promise<boolean>;
+    monitor();
 }
 
 interface IConfigService{

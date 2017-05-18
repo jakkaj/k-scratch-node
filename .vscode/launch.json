@@ -10,7 +10,8 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-u",
+                "-m",
+                "-l",
                 "-p","C:\\Temp\\techone\\testupload\\src"
             ],
             "cwd": "${workspaceRoot}",

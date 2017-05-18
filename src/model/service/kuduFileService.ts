@@ -6,6 +6,7 @@ import * as path from "path";
 import * as del from "del";
 import * as unzip from "unzip-stream";
 import * as admzip from "adm-zip";
+import * as watch from 'watch';
 
 import { IKuduFileService, tContracts, IConfigService } from "../contract/ServiceContracts";
 import { publishProfile, publishMethods } from "../entity/publishSettings";
@@ -24,73 +25,25 @@ class kuduFileService extends configBase implements IKuduFileService {
         this._stringHelper = new stringHelpers();       
     }    
 
-    private async _doUpload(file:string, zip:boolean, subPath:string):Promise<boolean>{
-        return new Promise<boolean>((good, bad)=>{
-            
-            if(!fs.existsSync(file)){
-                this.logger.logWarning(`Upload failed -> file not found ${file}`);
-                bad();
-                return;
-            }
-            
-            var len = fs.statSync(file).size;
-
-            var requestUri = "";
-            if(zip){
-                requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
-            }else{
-                requestUri = `https://${this.publishProfile.publishUrl}/api/vfs/site/wwwroot/`;
-            }
-            
-            
-            if (subPath != null && subPath.length > 0)
-            {
-                subPath = this._stringHelper.trim(subPath, '\\\\/');
-                requestUri += subPath + "/";
-            }
-
-            this.logger.log(`[Uploading ${len} bytes to ${requestUri}]`);
-
-            var uploadConfig = {
-                url: requestUri, 
-                //'proxy': 'http://127.0.0.1:8888', 
-                //'rejectUnauthorized': false, 
-                headers:{
-                    "Content-Length": len
-                }, 
-                body: fs.readFileSync(file)          
-            }            
-
-            if(!zip){
-                uploadConfig.headers["If-Match"] = "*";
-            }
-
-            var req = request.put(uploadConfig)                
-                .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
-             
-            var t = "";
-            
-            req.on('data', async (data)=>{
-                t+=data;
+    monitor(){
+        var dir = process.cwd();
+        watch.createMonitor(dir,  (monitor) => {
+            //monitor.files['/home/mikeal/.zshrc'] // Stat object for my zshrc.
+            monitor.on("created", (f, stat)=> {
+            // Handle new files
+                this.logger.logInfo(`[CREATED] ${f}`)
+                var subPath = f.replace(dir, '');
+                this.uploadFile(f, subPath);
             })
-
-            req.on('response', async (response)=>{
-                this.logger.logGood(`[Upload ${response.statusCode}]`); 
-                if(response.statusCode > 299){
-                    this.logger.logWarning(`[Error ${response.statusMessage}]`);                     
-                }
-                
-            });
-
-            req.on('error', async(error)=>{
-                this.logger.logWarning(`[Error ${error}]`); 
+            monitor.on("changed", (f, curr, prev)=> {
+            // Handle file changes
+                this.logger.logInfo(`[CHANGED] ${f}`);
+                var subPath = f.replace(dir, '');
+                this.uploadFile(f, subPath); 
             })
-
-            req.on('end', async()=>{
-                this.logger.logInfo(t);
-                
-                good(true);               
-            })  
+            monitor.on("removed", (f, stat)=> {
+            // Handle removed files
+            })        
         });
     }
 
@@ -155,6 +108,76 @@ class kuduFileService extends configBase implements IKuduFileService {
                 this.logger.logError("There was a problem uploading");
             }
         
+        });
+    }
+
+    private async _doUpload(file:string, zip:boolean, subPath:string):Promise<boolean>{
+        return new Promise<boolean>((good, bad)=>{
+            
+            if(!fs.existsSync(file)){
+                this.logger.logWarning(`Upload failed -> file not found ${file}`);
+                bad();
+                return;
+            }
+            
+            var len = fs.statSync(file).size;
+
+            var requestUri = "";
+            if(zip){
+                requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
+            }else{
+                requestUri = `https://${this.publishProfile.publishUrl}/api/vfs/site/wwwroot/`;
+            }
+            
+            
+            if (subPath != null && subPath.length > 0)
+            {
+                subPath = this._stringHelper.trim(subPath, '\\\\/');
+                requestUri += subPath;
+            }
+
+            this.logger.log(`[Uploading ${len} bytes to ${requestUri}]`);
+
+            var uploadConfig = {
+                url: requestUri, 
+                //'proxy': 'http://127.0.0.1:8888', 
+                //'rejectUnauthorized': false, 
+                headers:{
+                    "Content-Length": len
+                }, 
+                body: fs.readFileSync(file)          
+            }            
+
+            if(!zip){
+                uploadConfig.headers["If-Match"] = "*";
+            }
+
+            var req = request.put(uploadConfig)                
+                .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
+             
+            var t = "";
+            
+            req.on('data', async (data)=>{
+                t+=data;
+            })
+
+            req.on('response', async (response)=>{
+                this.logger.logGood(`[Upload ${response.statusCode}]`); 
+                if(response.statusCode > 299){
+                    this.logger.logWarning(`[Error ${response.statusMessage}]`);                     
+                }
+                
+            });
+
+            req.on('error', async(error)=>{
+                this.logger.logWarning(`[Error ${error}]`); 
+            })
+
+            req.on('end', async()=>{
+                this.logger.logInfo(t);
+                
+                good(true);               
+            })  
         });
     }
 
