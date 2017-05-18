@@ -30,6 +30,78 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
         super();
         this._stringHelper = new stringHelpers_1.stringHelpers();
     }
+    _doUpload(file, zip, subPath) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((good, bad) => {
+                if (!fs.existsSync(file)) {
+                    this.logger.logWarning(`Upload failed -> file not found ${file}`);
+                    bad();
+                    return;
+                }
+                var len = fs.statSync(file).size;
+                var requestUri = "";
+                if (zip) {
+                    requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
+                }
+                else {
+                    requestUri = `https://${this.publishProfile.publishUrl}/api/vfs/site/wwwroot/`;
+                }
+                if (subPath != null && subPath.length > 0) {
+                    subPath = this._stringHelper.trim(subPath, '\\\\/');
+                    requestUri += subPath + "/";
+                }
+                this.logger.log(`[Uploading ${len} bytes to ${requestUri}]`);
+                var uploadConfig = {
+                    url: requestUri,
+                    //'proxy': 'http://127.0.0.1:8888', 
+                    //'rejectUnauthorized': false, 
+                    headers: {
+                        "Content-Length": len
+                    },
+                    body: fs.readFileSync(file)
+                };
+                if (!zip) {
+                    uploadConfig.headers["If-Match"] = "*";
+                }
+                var req = request.put(uploadConfig)
+                    .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
+                var t = "";
+                req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
+                    t += data;
+                }));
+                req.on('response', (response) => __awaiter(this, void 0, void 0, function* () {
+                    this.logger.logGood(`[Upload ${response.statusCode}]`);
+                    if (response.statusCode > 299) {
+                        this.logger.logWarning(`[Error ${response.statusMessage}]`);
+                    }
+                }));
+                req.on('error', (error) => __awaiter(this, void 0, void 0, function* () {
+                    this.logger.logWarning(`[Error ${error}]`);
+                }));
+                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
+                    this.logger.logInfo(t);
+                    good(true);
+                }));
+            });
+        });
+    }
+    uploadFile(file, subPath) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.init();
+            return new Promise((good, bad) => __awaiter(this, void 0, void 0, function* () {
+                if (!fs.existsSync(file)) {
+                    this.logger.logWarning(`Upload failed -> file not found ${file}`);
+                    bad(`Upload failed`);
+                }
+                try {
+                    var result = yield this._doUpload(file, false, subPath);
+                }
+                catch (e) {
+                    this.logger.logError("There was a problem uploading");
+                }
+            }));
+        });
+    }
     uploadFiles(subPath) {
         return __awaiter(this, void 0, void 0, function* () {
             this.init();
@@ -56,44 +128,13 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
                 }
                 zip.writeZip(tmpFile.name);
-                var len = fs.statSync(tmpFile.name).size;
-                var requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
-                if (subPath != null && subPath.length > 0) {
-                    subPath = this._stringHelper.trim(subPath, '\\\\/');
-                    requestUri += subPath + "/";
-                }
-                this.logger.log(`[Uploading ${len} bytes to ${requestUri}]`);
-                var uploadConfig = {
-                    url: requestUri,
-                    //'proxy': 'http://127.0.0.1:8888', 
-                    //'rejectUnauthorized': false, 
-                    headers: {
-                        "Content-Length": len
-                    },
-                    body: fs.readFileSync(tmpFile.name)
-                };
-                //var fStream = fs.createReadStream(tmpFile.name);                     
-                var req = request.put(uploadConfig)
-                    .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
-                var t = "";
-                req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
-                    t += data;
-                }));
-                req.on('response', (response) => __awaiter(this, void 0, void 0, function* () {
-                    this.logger.logGood(`[Upload ${response.statusCode}]`);
-                    if (response.statusCode > 299) {
-                        this.logger.logWarning(`[Error ${response.statusMessage}]`);
-                    }
-                }));
-                req.on('error', (error) => __awaiter(this, void 0, void 0, function* () {
-                    this.logger.logWarning(`[Error ${error}]`);
-                }));
-                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
-                    this.logger.logInfo(t);
+                try {
+                    var result = yield this._doUpload(tmpFile.name, true, subPath);
                     yield del(tmpFile.name, { force: true });
-                    good(true);
-                }));
-                //req.pipe(fStream);
+                }
+                catch (e) {
+                    this.logger.logError("There was a problem uploading");
+                }
             }));
         });
     }

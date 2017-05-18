@@ -24,46 +24,24 @@ class kuduFileService extends configBase implements IKuduFileService {
         this._stringHelper = new stringHelpers();       
     }    
 
-    async uploadFiles(subPath:string):Promise<boolean>{
-        this.init();
-
-        return new Promise<boolean>(async (good, bad)=>{
-            var tmpFile = tmp.fileSync();
+    private async _doUpload(file:string, zip:boolean, subPath:string):Promise<boolean>{
+        return new Promise<boolean>((good, bad)=>{
             
-            var dir = process.cwd();
-
-            var offset = ".";
-
-            if (subPath != null && subPath.length > 0)
-            {
-                dir = path.join(dir, subPath);
-                offset += subPath;
+            if(!fs.existsSync(file)){
+                this.logger.logWarning(`Upload failed -> file not found ${file}`);
+                bad();
+                return;
             }
-
-            if(!fs.existsSync(dir)){
-                await del(tmpFile.name, {force:true});
-                this.logger.logWarning(`Directory could not be found: ${dir}`);
-                return false;
-            }
-
-            var output = fs.createWriteStream(tmpFile.name);
-
-             var zip = new admzip();    
-           
-            var w = new functionWalker(dir);       
-            var files = await w.doWalk();
-            this.logger.log("[Zipping]");
             
-            for(var i in files){
-                var f = files[i];                
-               zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
+            var len = fs.statSync(file).size;
+
+            var requestUri = "";
+            if(zip){
+                requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
+            }else{
+                requestUri = `https://${this.publishProfile.publishUrl}/api/vfs/site/wwwroot/`;
             }
-
-            zip.writeZip(tmpFile.name);            
-           
-            var len = fs.statSync(tmpFile.name).size;
-
-            var requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
+            
             
             if (subPath != null && subPath.length > 0)
             {
@@ -80,10 +58,12 @@ class kuduFileService extends configBase implements IKuduFileService {
                 headers:{
                     "Content-Length": len
                 }, 
-                body: fs.readFileSync(tmpFile.name)          
-            }
+                body: fs.readFileSync(file)          
+            }            
 
-            //var fStream = fs.createReadStream(tmpFile.name);                     
+            if(!zip){
+                uploadConfig.headers["If-Match"] = "*";
+            }
 
             var req = request.put(uploadConfig)                
                 .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
@@ -108,14 +88,72 @@ class kuduFileService extends configBase implements IKuduFileService {
 
             req.on('end', async()=>{
                 this.logger.logInfo(t);
-                await del(tmpFile.name, {force:true});
+                
                 good(true);               
             })  
+        });
+    }
 
+    async uploadFile(file:string, subPath:string):Promise<boolean>{
+        this.init();
+
+        return new Promise<boolean>(async (good, bad)=>{
+            if(!fs.existsSync(file)){
+                this.logger.logWarning(`Upload failed -> file not found ${file}`);
+                bad(`Upload failed`)
+            }
+
+            try{
+                var result = await this._doUpload(file,false, subPath);                
+            } catch(e){
+                this.logger.logError("There was a problem uploading");
+            }
+        });
+    }
+
+    async uploadFiles(subPath:string):Promise<boolean>{
+        this.init();
+
+        return new Promise<boolean>(async (good, bad)=>{
+            var tmpFile = tmp.fileSync();
             
+            var dir = process.cwd();
+
+            var offset = ".";
+
+            if (subPath != null && subPath.length > 0)
+            {
+                dir = path.join(dir, subPath);
+                offset += subPath;
+            }
+
+            if(!fs.existsSync(dir)){
+                await del(tmpFile.name, {force:true});
+                this.logger.logWarning(`Directory could not be found: ${dir}`);
+                return false;
+            }
+
+            var output = fs.createWriteStream(tmpFile.name);
+
+            var zip = new admzip();    
+           
+            var w = new functionWalker(dir);       
+            var files = await w.doWalk();
+            this.logger.log("[Zipping]");
             
-            //req.pipe(fStream);
-            
+            for(var i in files){
+                var f = files[i];                
+               zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
+            }
+
+            zip.writeZip(tmpFile.name);            
+           
+            try{
+                var result = await this._doUpload(tmpFile.name, true, subPath);
+                await del(tmpFile.name, {force:true});
+            } catch(e){
+                this.logger.logError("There was a problem uploading");
+            }
         
         });
     }
