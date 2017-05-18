@@ -20,6 +20,7 @@ class glue{
         this.container.bind<ILocalLogService>(tContracts.ILocalLogService).to(localLogService).inSingletonScope();
         this.container.bind<IKuduLogService>(tContracts.IKuduLogService).to(kuduLogService).inSingletonScope();
         this.container.bind<IKuduFileService>(tContracts.IKuduFileService).to(kuduFileService).inSingletonScope();
+        
     }    
 }
 

@@ -1,5 +1,9 @@
 import { publishProfile } from "../entity/publishSettings";
 
+interface IFunctionTestSettings{
+    getFunctionSettings():Promise<functionSettings>;
+}
+
 interface IBootService {
     booted(process);    
 }
@@ -36,7 +40,10 @@ let tContracts = {
     IConfigService: Symbol("IConfigService"),
     ILocalLogService: Symbol("ILocalLogService"),
     IKuduLogService: Symbol("IKuduLogService"), 
-    IKuduFileService : Symbol("IKuduFileService")
+    IKuduFileService : Symbol("IKuduFileService"),
+    IFunctionTestSettings : Symbol("IFunctionTestSettings")
 }
 
-export {IBootService, IKuduLogService, IConfigService, ILocalLogService, IKuduFileService, tContracts};
+export {IBootService, IKuduLogService, IConfigService, 
+            ILocalLogService, IKuduFileService, IFunctionTestSettings, 
+            tContracts};
