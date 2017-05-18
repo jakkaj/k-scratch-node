@@ -62,19 +62,19 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     subPath = this._stringHelper.trim(subPath, '\\\\/');
                     requestUri += subPath + "/";
                 }
-                this.logger.log(`[Uploading to ${requestUri}]`);
+                this.logger.log(`[Uploading ${len} bytes to ${requestUri}]`);
                 var uploadConfig = {
                     url: requestUri,
-                    'proxy': 'http://127.0.0.1:8888',
-                    'rejectUnauthorized': false,
+                    //'proxy': 'http://127.0.0.1:8888', 
+                    //'rejectUnauthorized': false, 
                     headers: {
                         "Content-Length": len
-                    }
+                    },
+                    body: fs.readFileSync(tmpFile.name)
                 };
-                var fStream = fs.createReadStream(tmpFile.name);
+                //var fStream = fs.createReadStream(tmpFile.name);                     
                 var req = request.put(uploadConfig)
-                    .auth(this.publishProfile.userName, this.publishProfile.userPWD, false)
-                    .pipe(fStream);
+                    .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
                 var t = "";
                 req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
                     t += data;

@@ -70,7 +70,7 @@ class bootService extends serviceBase implements IBootService {
 
         return initGood;
     }
-
+    
    private _help(){
         program.help();
     }

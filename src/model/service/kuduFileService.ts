@@ -71,22 +71,23 @@ class kuduFileService extends configBase implements IKuduFileService {
                 requestUri += subPath + "/";
             }
 
-            this.logger.log(`[Uploading to ${requestUri}]`);
+            this.logger.log(`[Uploading ${len} bytes to ${requestUri}]`);
 
             var uploadConfig = {
                 url: requestUri, 
-                'proxy': 'http://127.0.0.1:8888', 
-                'rejectUnauthorized': false, 
+                //'proxy': 'http://127.0.0.1:8888', 
+                //'rejectUnauthorized': false, 
                 headers:{
                     "Content-Length": len
-                }              
+                }, 
+                body: fs.readFileSync(tmpFile.name)          
             }
 
-            var fStream = fs.createReadStream(tmpFile.name);                     
+            //var fStream = fs.createReadStream(tmpFile.name);                     
 
             var req = request.put(uploadConfig)                
-                .auth(this.publishProfile.userName, this.publishProfile.userPWD, false)
-                .pipe(fStream);
+                .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
+             
             var t = "";
             
             req.on('data', async (data)=>{
@@ -102,11 +103,11 @@ class kuduFileService extends configBase implements IKuduFileService {
             });
 
             req.on('error', async(error)=>{
-                    this.logger.logWarning(`[Error ${error}]`); 
+                this.logger.logWarning(`[Error ${error}]`); 
             })
 
             req.on('end', async()=>{
-                    this.logger.logInfo(t);
+                this.logger.logInfo(t);
                 await del(tmpFile.name, {force:true});
                 good(true);               
             })  
