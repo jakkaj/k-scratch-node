@@ -171,6 +171,7 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     subPath = this._stringHelper.trim(subPath, '\\\\/');
                     requestUri += subPath + "/";
                 }
+                this.logger.log(`[Downloading] -> ${requestUri}`);
                 var req = request.get(requestUri).auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
                 req.on('response', (res) => {
                     res.pipe(fs.createWriteStream(fTemp));

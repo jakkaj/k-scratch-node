@@ -8,6 +8,10 @@ interface IKuduLogService{
     startLog();
 }
 
+interface IFunctionGraphService{
+    buildGraph(saveFile:string);
+}
+
 interface IKuduFileService{
     getFiles(subPath:string):Promise<boolean>;
     uploadFiles(subPath:string):Promise<boolean>;
@@ -36,7 +40,8 @@ let tContracts = {
     IConfigService: Symbol("IConfigService"),
     ILocalLogService: Symbol("ILocalLogService"),
     IKuduLogService: Symbol("IKuduLogService"), 
-    IKuduFileService : Symbol("IKuduFileService")
+    IKuduFileService : Symbol("IKuduFileService"), 
+    IFunctionGraphService : Symbol("IFunctionGraphService")
 }
 
-export {IBootService, IKuduLogService, IConfigService, ILocalLogService, IKuduFileService, tContracts};
+export {IBootService, IKuduLogService, IConfigService, ILocalLogService, IKuduFileService, IFunctionGraphService, tContracts};

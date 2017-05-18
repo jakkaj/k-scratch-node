@@ -197,6 +197,8 @@ class kuduFileService extends configBase implements IKuduFileService {
                 requestUri += subPath + "/";
             }
 
+            this.logger.log(`[Downloading] -> ${requestUri}`);
+
             var req = request.get(requestUri).auth(this.publishProfile.userName, this.publishProfile.userPWD, false);        
             
             req.on('response', (res)=>{
