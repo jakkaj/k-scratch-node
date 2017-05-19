@@ -15,6 +15,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
+const request = require("request");
+const linq = require("linq-es2015");
 const serviceBase_1 = require("./serviceBase");
 let functionTestService = class functionTestService extends serviceBase_1.configBase {
     constructor() {
@@ -47,6 +49,7 @@ let functionTestService = class functionTestService extends serviceBase_1.config
                     try {
                         var key = yield this.getKey(siteSettings, setting[0]);
                         urlBase += `code=${key}`;
+                        yield this.doGet(urlBase, conf.method, conf.headers, conf.body);
                     }
                     catch (e) {
                         this.logger.log("There was a problem getting the function admin key");
@@ -58,12 +61,52 @@ let functionTestService = class functionTestService extends serviceBase_1.config
             }));
         });
     }
+    doGet(url, method, headers, body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var siteSettings = this.getDefaultConfig();
+            var h = { 'Content-Type': 'application/json' };
+            if (headers) {
+                headers.forEach((c) => {
+                    h[c.name] = c.value;
+                });
+            }
+            var config = {
+                method: method.toLocaleUpperCase(),
+                uri: url,
+                body: body,
+                headers: h
+            };
+            return new Promise((good, bad) => {
+                var req = request(config).auth(siteSettings.userName, siteSettings.userPWD, false);
+                var t = "";
+                req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
+                    t += data;
+                }));
+                req.on('response', (response) => __awaiter(this, void 0, void 0, function* () {
+                    if (response.statusCode >= 200 && response.statusCode < 300) {
+                        this.logger.logGood(`[Remote] -> ${response.statusCode}`);
+                    }
+                    else {
+                        this.logger.logError(`[Remote] -> ${response.statusCode}`);
+                    }
+                }));
+                req.on('end', () => {
+                    this.logger.log(t);
+                    good(true);
+                });
+            });
+        });
+    }
     getKey(siteSettings, functionSettings) {
         return __awaiter(this, void 0, void 0, function* () {
             var requestUri = `${siteSettings.destinationAppUrl.replace("http", "https")}/admin/functions/${functionSettings.name}/keys`;
             var headers = { 'x-functions-key': this.key };
-            var result = yield this.get(requestUri, { headers: headers });
-            return result;
+            var result = yield this.getAndParse(requestUri, { headers: headers });
+            var key = linq.asEnumerable(result.keys).FirstOrDefault(_ => _.name == "default");
+            if (!key) {
+                return null;
+            }
+            return key.value;
         });
     }
     getFunctionData(functionKey) {

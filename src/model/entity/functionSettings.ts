@@ -1,4 +1,4 @@
-interface functionSettings{
+export interface functionSettings{
     name:string;
     function_app_id:any;
     script_root_path_href:string;
@@ -11,14 +11,14 @@ interface functionSettings{
     test_data:string;   
 }
 
-interface config{
+export interface config{
     disabled:boolean;
     scriptFile:string;
     entryPoint:string;
     bindings:Array<binding>;
 }
 
-interface binding{    
+export interface binding{    
     authLevel:string;
     name:string;
     type:string; 
@@ -30,13 +30,13 @@ interface binding{
     accessRights:string;     
 }
 
-interface nameValuePair
+export interface nameValuePair
 {
     name:string;
     value:string;
 }
 
-interface testDataConfig
+export interface testDataConfig
 {
     availableMethods:Array<any>;
     queryStringParams:Array<nameValuePair>;
@@ -45,4 +45,21 @@ interface testDataConfig
     body:string;
 }
 
-export{functionSettings, config, binding, nameValuePair, testDataConfig};
+export interface key
+{
+    name:string;
+    value:string;
+}
+
+export interface link
+{
+    rel:string;
+    href:string;
+}
+
+export interface functionKey
+{
+    keys:Array<key>;
+    links:Array<link>;
+}
+

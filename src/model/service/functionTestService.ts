@@ -1,9 +1,12 @@
+import { functionKey, nameValuePair } from './../entity/functionSettings';
 import { injectable } from 'inversify';
 import * as request from 'request';
+import * as linq from 'linq-es2015';
+
 
 import { configBase } from "./serviceBase";
 import { IFunctionTestService } from "../contract/ServiceContracts";
-import { functionSettings, binding, testDataConfig } from "../entity/functionSettings";
+import { functionSettings, binding, testDataConfig, key } from "../entity/functionSettings";
 import { publishSettings, publishProfile } from "../entity/publishSettings";
 
 
@@ -56,6 +59,7 @@ class functionTestService extends configBase implements IFunctionTestService{
                 try{
                     var key = await this.getKey(siteSettings, setting[0]);
                     urlBase += `code=${key}`;
+                    await this.doGet(urlBase, conf.method, conf.headers, conf.body);
                 }catch(e){
                     this.logger.log("There was a problem getting the function admin key");
                     bad(false);
@@ -65,9 +69,50 @@ class functionTestService extends configBase implements IFunctionTestService{
             }else{
 
             }
-
-
         });
+    }
+
+    private async doGet(url:string, method:string, headers:Array<nameValuePair>, body:string) : Promise<boolean>{
+        var siteSettings:publishProfile = this.getDefaultConfig();
+
+        var h = {'Content-Type': 'application/json'};
+
+        if(headers){            
+            headers.forEach((c:nameValuePair)=>{
+                h[c.name] = c.value;
+            });
+        }        
+
+        var config = {
+            method:method.toLocaleUpperCase(), 
+            uri: url, 
+            body: body, 
+            headers:h
+        }
+
+        return new Promise<boolean>((good, bad)=>{
+            var req = request(config).auth(siteSettings.userName, siteSettings.userPWD, false);
+
+            var t = "";
+            
+            req.on('data', async (data)=>{
+                t+=data;
+            })
+
+            req.on('response', async (response)=>{                
+                if(response.statusCode >= 200 && response.statusCode < 300){
+                    this.logger.logGood(`[Remote] -> ${response.statusCode}`);                     
+                }else{
+                    this.logger.logError(`[Remote] -> ${response.statusCode}`);                     
+                } 
+                                
+            });
+
+            req.on('end', ()=>{
+                this.logger.log(t);
+                good(true);
+            });
+        });        
     }
 
     private async getKey(siteSettings:publishProfile, functionSettings:functionSettings):Promise<string>{
@@ -75,11 +120,14 @@ class functionTestService extends configBase implements IFunctionTestService{
         
         var headers = {'x-functions-key': this.key};
 
-        var result = await this.get(requestUri, {headers:headers});
-
-        return result;
-
+        var result = await this.getAndParse<functionKey>(requestUri, {headers:headers});
         
+        var key:key = linq.asEnumerable(result.keys).FirstOrDefault(_=>_.name == "default");
+
+        if(!key){
+            return null;
+        }
+        return key.value;        
     }
 
     async getFunctionData(functionKey: string): Promise<boolean>{

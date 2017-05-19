@@ -37,6 +37,20 @@ class configBase extends serviceBase {
          return p;
     }
 
+    //TODO: These get methods should really be on an injected class, for now they are here. 
+    
+    public async getAndParse<T>(requestUri:string, config?:{}):Promise<T>{
+        var result = await this.get(requestUri, config);
+
+        if(!result || result.length == 0){
+            return null;
+        }
+
+        var obj:T = JSON.parse(result);
+
+        return obj;
+    }
+
     public async get(requestUri:string, config?:{}):Promise<string>{
         
         var siteSettings = this.getDefaultConfig();        

@@ -45,6 +45,17 @@ let configBase = class configBase extends serviceBase {
         }
         return p;
     }
+    //TODO: These get methods should really be on an injected class, for now they are here. 
+    getAndParse(requestUri, config) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var result = yield this.get(requestUri, config);
+            if (!result || result.length == 0) {
+                return null;
+            }
+            var obj = JSON.parse(result);
+            return obj;
+        });
+    }
     get(requestUri, config) {
         return __awaiter(this, void 0, void 0, function* () {
             var siteSettings = this.getDefaultConfig();
