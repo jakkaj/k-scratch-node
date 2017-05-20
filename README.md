@@ -38,6 +38,8 @@ Copy the publish profile in to a new empty folder. The publish profile can be in
 
 You can run ```ks``` by changing to the folder where your publish settings are are located (or any child) or you can use the -p option to set a path (absolute or relative).
 
+It's a good idea to keep your publish settings up the path, outside of your repo so you don't accidentally check it in. 
+
 ```ks -l -p ~/dev/something```
 
 ### Logging
