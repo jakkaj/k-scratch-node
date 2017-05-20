@@ -17,7 +17,7 @@ class functionTestService extends configBase implements IFunctionTestService{
     private funcSettings:Array<functionSettings>;
     private settingsMatch:[functionSettings, binding][];
     private key:string;
-
+    private runKey:string = null;
     constructor() {
         super();
         this.settingsMatch = [];
@@ -63,12 +63,22 @@ class functionTestService extends configBase implements IFunctionTestService{
                 }catch(e){
                     this.logger.log("There was a problem getting the function admin key");
                     bad(false);
-                }
-
-                
+                }                
             }else{
-
+                var urlBase = `${siteSettings.destinationAppUrl}/admin/functions/${setting[0].name}`;
+                urlBase = urlBase.replace('http', 'https');
+                var headers = new Array<nameValuePair>();              
+                headers.push({name:'x-functions-key', value:this.key});
+                
+                var post = JSON.stringify({'input':setting[0].test_data});
+                try{
+                    this.doGet(urlBase, 'POST', headers, post);
+                }catch(e){
+                    this.logger.log("There was a problem executing the remote function");
+                    bad(false);
+                }
             }
+            good(true);
         });
     }
 
@@ -87,7 +97,10 @@ class functionTestService extends configBase implements IFunctionTestService{
             method:method.toLocaleUpperCase(), 
             uri: url, 
             body: body, 
-            headers:h
+            headers:h,
+            // 'proxy': 'http://127.0.0.1:8888', 
+            // 'rejectUnauthorized': false, 
+
         }
 
         return new Promise<boolean>((good, bad)=>{
@@ -116,6 +129,10 @@ class functionTestService extends configBase implements IFunctionTestService{
     }
 
     private async getKey(siteSettings:publishProfile, functionSettings:functionSettings):Promise<string>{
+        if(this.runKey != null){
+            return this.runKey;
+        }
+        
         var requestUri = `${siteSettings.destinationAppUrl.replace("http", "https")}/admin/functions/${functionSettings.name}/keys`;
         
         var headers = {'x-functions-key': this.key};
@@ -127,6 +144,9 @@ class functionTestService extends configBase implements IFunctionTestService{
         if(!key){
             return null;
         }
+
+        this.runKey = key.value;
+
         return key.value;        
     }
 

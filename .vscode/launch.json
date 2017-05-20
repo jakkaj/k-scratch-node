@@ -10,6 +10,7 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
+                "-l",
                 "-k", "02mtWqPfAGtmjzzepqUPwf1QnOTZd/i0qC0QrKgxwLERhCa9uQRaNg==",                
                 "-p","C:\\Temp\\videoIngestion\\src"
             ],

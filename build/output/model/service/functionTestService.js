@@ -21,6 +21,7 @@ const serviceBase_1 = require("./serviceBase");
 let functionTestService = class functionTestService extends serviceBase_1.configBase {
     constructor() {
         super();
+        this.runKey = null;
         this.settingsMatch = [];
     }
     runTest(testNumber) {
@@ -57,7 +58,20 @@ let functionTestService = class functionTestService extends serviceBase_1.config
                     }
                 }
                 else {
+                    var urlBase = `${siteSettings.destinationAppUrl}/admin/functions/${setting[0].name}`;
+                    urlBase = urlBase.replace('http', 'https');
+                    var headers = new Array();
+                    headers.push({ name: 'x-functions-key', value: this.key });
+                    var post = JSON.stringify({ 'input': setting[0].test_data });
+                    try {
+                        this.doGet(urlBase, 'POST', headers, post);
+                    }
+                    catch (e) {
+                        this.logger.log("There was a problem executing the remote function");
+                        bad(false);
+                    }
                 }
+                good(true);
             }));
         });
     }
@@ -74,7 +88,9 @@ let functionTestService = class functionTestService extends serviceBase_1.config
                 method: method.toLocaleUpperCase(),
                 uri: url,
                 body: body,
-                headers: h
+                headers: h,
+                'proxy': 'http://127.0.0.1:8888',
+                'rejectUnauthorized': false,
             };
             return new Promise((good, bad) => {
                 var req = request(config).auth(siteSettings.userName, siteSettings.userPWD, false);
@@ -99,6 +115,9 @@ let functionTestService = class functionTestService extends serviceBase_1.config
     }
     getKey(siteSettings, functionSettings) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.runKey != null) {
+                return this.runKey;
+            }
             var requestUri = `${siteSettings.destinationAppUrl.replace("http", "https")}/admin/functions/${functionSettings.name}/keys`;
             var headers = { 'x-functions-key': this.key };
             var result = yield this.getAndParse(requestUri, { headers: headers });
@@ -106,6 +125,7 @@ let functionTestService = class functionTestService extends serviceBase_1.config
             if (!key) {
                 return null;
             }
+            this.runKey = key.value;
             return key.value;
         });
     }

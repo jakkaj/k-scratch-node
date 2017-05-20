@@ -81,8 +81,7 @@ class bootService extends serviceBase implements IBootService {
 
         if(program.key){
             key = program.key;
-            await this._functionTestService.getFunctionData(program.key);
-            await this._functionTestService.runTest(7);
+            await this._functionTestService.getFunctionData(program.key);            
         }
 
         if(program.log){

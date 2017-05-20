@@ -24,12 +24,25 @@ class init extends glue_1.glueBase {
             }
         });
     }
+    runTest(funNumb) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var runner = i.glue.container.get(ServiceContracts_1.tContracts.IFunctionTestService);
+            yield runner.runTest(funNumb);
+        });
+    }
 }
 var i = new init();
 var logger = i.glue.container.get(ServiceContracts_1.tContracts.ILocalLogService);
 i.start(process.argv).then((e) => {
     if (e) {
         logger.logGood("OK");
+        i.runTest(5);
+        process.stdin.resume();
+        process.stdin.on('data', (k) => {
+            var key = k.toString();
+            var keyNumb = parseInt(key);
+            i.runTest(keyNumb);
+        });
     }
     else {
         logger.logError("NOT OK");
