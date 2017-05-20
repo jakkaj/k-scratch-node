@@ -111,7 +111,7 @@ class configService extends serviceBase implements IConfigService {
                     var f = files[fNumber];
                     if(f.toLowerCase().indexOf('publishsettings')!=-1){
                         var fResult = path.join(cwd, f);
-                        this.logger.logInfo("Using publish settings [" + fResult + "]");
+                        this.logger.logInfo(`[Using Publish Settings] -> ${fResult}`);
                         return fResult;
                     }
                 }                

@@ -15,7 +15,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
-const request = require("request");
 const fs = require("fs");
 const tmp = require("tmp");
 const path = require("path");
@@ -97,7 +96,7 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                 this.logger.log("[Zipping]");
                 for (var i in files) {
                     var f = files[i];
-                    if (f.toLowerCase().indexOf("publishsettings") != -1) {
+                    if (f.offsetName.toLowerCase().indexOf("publishsettings") != -1) {
                         continue;
                     }
                     zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
@@ -122,49 +121,43 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     return;
                 }
                 var len = fs.statSync(file).size;
-                var requestUri = "";
-                if (zip) {
-                    requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
-                }
-                else {
-                    requestUri = `https://${this.publishProfile.publishUrl}/api/vfs/site/wwwroot/`;
-                }
+                var uPath = 'site/wwwroot/';
                 if (subPath != null && subPath.length > 0) {
                     subPath = this._stringHelper.trim(subPath, '\\\\/');
-                    requestUri += subPath;
+                    uPath += subPath.replace('\\', '/');
                 }
-                this.logger.log(`[Uploading ${len} bytes to ${requestUri}]`);
-                var uploadConfig = {
-                    url: requestUri,
-                    //'proxy': 'http://127.0.0.1:8888', 
-                    //'rejectUnauthorized': false, 
-                    headers: {
-                        "Content-Length": len
-                    },
-                    body: fs.readFileSync(file)
-                };
-                if (!zip) {
-                    uploadConfig.headers["If-Match"] = "*";
+                this.logger.log(`[Uploading ${len} bytes to ${uPath}]`);
+                var kudu = kuduApi({
+                    website: this.publishProfile.msdeploySite,
+                    username: this.publishProfile.userName,
+                    password: this.publishProfile.userPWD
+                });
+                if (zip) {
+                    kudu.zip.upload(file, uPath, (e) => {
+                        if (e) {
+                            this.logger.logError(`[Upload Zip Error] -> ${e}`);
+                            bad(false);
+                            return;
+                        }
+                        else {
+                            this.logger.logGood("[Upload OK]");
+                            good(true);
+                        }
+                    });
                 }
-                var req = request.put(uploadConfig)
-                    .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
-                var t = "";
-                req.on('data', (data) => __awaiter(this, void 0, void 0, function* () {
-                    t += data;
-                }));
-                req.on('response', (response) => __awaiter(this, void 0, void 0, function* () {
-                    this.logger.logGood(`[Upload ${response.statusCode}]`);
-                    if (response.statusCode > 299) {
-                        this.logger.logWarning(`[Error ${response.statusMessage}]`);
-                    }
-                }));
-                req.on('error', (error) => __awaiter(this, void 0, void 0, function* () {
-                    this.logger.logWarning(`[Error ${error}]`);
-                }));
-                req.on('end', () => __awaiter(this, void 0, void 0, function* () {
-                    this.logger.logInfo(t);
-                    good(true);
-                }));
+                else {
+                    kudu.vfs.uploadFile(file, uPath, (e) => {
+                        if (e) {
+                            this.logger.logError(`[Upload File Error] -> ${e}`);
+                            bad(false);
+                            return;
+                        }
+                        else {
+                            this.logger.logGood("[Upload OK]");
+                            good(true);
+                        }
+                    });
+                }
             });
         });
     }
@@ -199,21 +192,6 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                         good(true);
                     }
                 }));
-                // var req = request.get(requestUri).auth(this.publishProfile.userName, this.publishProfile.userPWD, false);        
-                // req.on('response', (res)=>{
-                //     res.pipe(fs.createWriteStream(fTemp));
-                // });
-                //  req.on('error', async (e)=>{
-                //     this.logger.logError("[HTTPS] " + e);
-                //     await this.cleanUp(tmpObj);
-                //     bad(false);
-                //  })
-                // req.on('end', async ()=>{
-                //     this.logger.logInfo("Downloaded to temp file: " + tmpObj.name); 
-                //     fs.createReadStream(fTemp).pipe(unzip.Extract({path: "./"}));
-                //     await this.cleanUp(tmpObj);
-                //     good(true);               
-                // });          
             });
         });
     }

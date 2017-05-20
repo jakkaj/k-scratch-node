@@ -102,7 +102,7 @@ class kuduFileService extends configBase implements IKuduFileService {
             
             for(var i in files){
                 var f = files[i];    
-               if(f.toLowerCase().indexOf("publishsettings")!=-1){
+               if(f.offsetName.toLowerCase().indexOf("publishsettings")!=-1){
                    continue;
                }         
                zip.addFile(f.offsetName, fs.readFileSync(f.fullName));
@@ -130,63 +130,46 @@ class kuduFileService extends configBase implements IKuduFileService {
             }
             
             var len = fs.statSync(file).size;
-
-            var requestUri = "";
-            if(zip){
-                requestUri = `https://${this.publishProfile.publishUrl}/api/zip/site/wwwroot/`;
-            }else{
-                requestUri = `https://${this.publishProfile.publishUrl}/api/vfs/site/wwwroot/`;
-            }
             
+            var uPath = 'site/wwwroot/';
             
             if (subPath != null && subPath.length > 0)
             {
                 subPath = this._stringHelper.trim(subPath, '\\\\/');
-                requestUri += subPath;
+                uPath += subPath.replace('\\', '/');
             }
 
-            this.logger.log(`[Uploading ${len} bytes to ${requestUri}]`);
+            this.logger.log(`[Uploading ${len} bytes to ${uPath}]`);
 
-            var uploadConfig = {
-                url: requestUri, 
-                //'proxy': 'http://127.0.0.1:8888', 
-                //'rejectUnauthorized': false, 
-                headers:{
-                    "Content-Length": len
-                }, 
-                body: fs.readFileSync(file)          
-            }            
-
-            if(!zip){
-                uploadConfig.headers["If-Match"] = "*";
-            }
-
-            var req = request.put(uploadConfig)                
-                .auth(this.publishProfile.userName, this.publishProfile.userPWD, false);
-             
-            var t = "";
-            
-            req.on('data', async (data)=>{
-                t+=data;
-            })
-
-            req.on('response', async (response)=>{
-                this.logger.logGood(`[Upload ${response.statusCode}]`); 
-                if(response.statusCode > 299){
-                    this.logger.logWarning(`[Error ${response.statusMessage}]`);                     
-                }
-                
+            var kudu = kuduApi({
+                website: this.publishProfile.msdeploySite,
+                username: this.publishProfile.userName,
+                password: this.publishProfile.userPWD
             });
 
-            req.on('error', async(error)=>{
-                this.logger.logWarning(`[Error ${error}]`); 
-            })
-
-            req.on('end', async()=>{
-                this.logger.logInfo(t);
-                
-                good(true);               
-            })  
+            if(zip){
+                kudu.zip.upload(file, uPath, (e)=>{
+                    if(e){
+                        this.logger.logError(`[Upload Zip Error] -> ${e}`)
+                        bad(false);
+                        return;
+                    }else{         
+                        this.logger.logGood("[Upload OK]")       
+                        good(true);   
+                    }
+                });
+            }else{
+                kudu.vfs.uploadFile(file, uPath, (e)=>{
+                    if(e){
+                        this.logger.logError(`[Upload File Error] -> ${e}`)
+                        bad(false);
+                        return;
+                    }else{  
+                         this.logger.logGood("[Upload OK]")                        
+                         good(true);   
+                    }
+                });
+            }            
         });
     }
 
@@ -201,9 +184,7 @@ class kuduFileService extends configBase implements IKuduFileService {
                 website: this.publishProfile.msdeploySite,
                 username: this.publishProfile.userName,
                 password: this.publishProfile.userPWD
-            });
-
-            
+            });            
 
             var requestUri = "https://" + this.publishProfile.publishUrl + "/api/zip/site/wwwroot/";
 
@@ -229,27 +210,7 @@ class kuduFileService extends configBase implements IKuduFileService {
                    await del(tmpFile.name, {force:true});
                    good(true);   
                 }
-            })            
-
-            // var req = request.get(requestUri).auth(this.publishProfile.userName, this.publishProfile.userPWD, false);        
-            
-            // req.on('response', (res)=>{
-            //     res.pipe(fs.createWriteStream(fTemp));
-            // });
-
-            //  req.on('error', async (e)=>{
-            //     this.logger.logError("[HTTPS] " + e);
-            //     await this.cleanUp(tmpObj);
-                   
-            //     bad(false);
-            //  })
-
-            // req.on('end', async ()=>{
-            //     this.logger.logInfo("Downloaded to temp file: " + tmpObj.name); 
-            //     fs.createReadStream(fTemp).pipe(unzip.Extract({path: "./"}));
-            //     await this.cleanUp(tmpObj);
-            //     good(true);               
-            // });          
+            })                      
             
         });
 
