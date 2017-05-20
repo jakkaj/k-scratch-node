@@ -7,6 +7,7 @@ import * as del from "del";
 import * as unzip from "unzip-stream";
 import * as admzip from "adm-zip";
 import * as watch from 'watch';
+import * as kuduApi from 'kudu-api';
 
 import { IKuduFileService, tContracts, IConfigService } from "../contract/ServiceContracts";
 import { publishProfile, publishMethods } from "../entity/publishSettings";
@@ -193,42 +194,63 @@ class kuduFileService extends configBase implements IKuduFileService {
         this.init();
 
         return new Promise<boolean>((good, bad)=>{
-            var tmpObj = tmp.dirSync();           
+            
+            var tmpFile = tmp.fileSync();            
+            
+            var kudu = kuduApi({
+                website: this.publishProfile.msdeploySite,
+                username: this.publishProfile.userName,
+                password: this.publishProfile.userPWD
+            });
 
-            var fTemp = path.join(tmpObj.name, "download.zip");
+            
 
             var requestUri = "https://" + this.publishProfile.publishUrl + "/api/zip/site/wwwroot/";
+
+            var dlUri = 'site/wwwroot/';
 
             if (subPath != null && subPath.length > 0)
             {
                 subPath = this._stringHelper.trim(subPath, '\\\\/');
                 requestUri += subPath + "/";
-            }
+                dlUri += subPath + "/";
+            }            
 
             this.logger.log(`[Downloading] -> ${requestUri}`);
 
-            var req = request.get(requestUri).auth(this.publishProfile.userName, this.publishProfile.userPWD, false);        
+            kudu.zip.download(dlUri, tmpFile.name, async (e)=>{
+                if(e){
+                    this.logger.logError(`[Download Error] -> ${e}`)
+                    bad(false);
+                    return;
+                }else{
+                   this.logger.logInfo("Downloaded to temp file: " + tmpFile.name); 
+                   fs.createReadStream(tmpFile.name).pipe(unzip.Extract({path: "./"}));
+                   await del(tmpFile.name, {force:true});
+                   good(true);   
+                }
+            })            
+
+            // var req = request.get(requestUri).auth(this.publishProfile.userName, this.publishProfile.userPWD, false);        
             
-            req.on('response', (res)=>{
-                res.pipe(fs.createWriteStream(fTemp));
-            });
+            // req.on('response', (res)=>{
+            //     res.pipe(fs.createWriteStream(fTemp));
+            // });
 
-             req.on('error', async (e)=>{
-                this.logger.logError("[HTTPS] " + e);
-                await this.cleanUp(tmpObj);
+            //  req.on('error', async (e)=>{
+            //     this.logger.logError("[HTTPS] " + e);
+            //     await this.cleanUp(tmpObj);
                    
-                bad(false);
-             })
+            //     bad(false);
+            //  })
 
-            req.on('end', async ()=>{
-                this.logger.logInfo("Downloaded to temp file: " + tmpObj.name); 
-                fs.createReadStream(fTemp).pipe(unzip.Extract({path: "./"}));
-                await this.cleanUp(tmpObj);
-                good(true);               
-            });
-
-           
-            return null;
+            // req.on('end', async ()=>{
+            //     this.logger.logInfo("Downloaded to temp file: " + tmpObj.name); 
+            //     fs.createReadStream(fTemp).pipe(unzip.Extract({path: "./"}));
+            //     await this.cleanUp(tmpObj);
+            //     good(true);               
+            // });          
+            
         });
 
       

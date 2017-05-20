@@ -12,7 +12,8 @@
             "args": [
                 "-l",
                 "-k", "02mtWqPfAGtmjzzepqUPwf1QnOTZd/i0qC0QrKgxwLERhCa9uQRaNg==",                
-                "-p","C:\\Temp\\videoIngestion\\src"
+                "-p","C:\\Temp\\videoIngestion\\src2",
+                "-g"
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",

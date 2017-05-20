@@ -44,6 +44,7 @@
     "commander": "^2.9.0",
     "del": "^2.2.2",
     "inversify": "^3.3.0",
+    "kudu-api": "^1.4.1",
     "linq-es2015": "^2.4.22",
     "opn": "^5.0.0",
     "reflect-metadata": "^0.1.10",
