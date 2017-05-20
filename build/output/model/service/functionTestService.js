@@ -89,8 +89,6 @@ let functionTestService = class functionTestService extends serviceBase_1.config
                 uri: url,
                 body: body,
                 headers: h,
-                'proxy': 'http://127.0.0.1:8888',
-                'rejectUnauthorized': false,
             };
             return new Promise((good, bad) => {
                 var req = request(config).auth(siteSettings.userName, siteSettings.userPWD, false);

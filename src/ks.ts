@@ -30,7 +30,7 @@ var logger = i.glue.container.get<ILocalLogService>(tContracts.ILocalLogService)
 i.start(process.argv).then((e)=>{
     if(e){
         logger.logGood("OK");  
-        i.runTest(5);
+        
         process.stdin.resume();
         process.stdin.on('data', (k)=>{
             
