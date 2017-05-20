@@ -1,6 +1,8 @@
 # k-scratch
 K-Scratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping. 
 
+**Warning:** This is a tool to aid in the development of Azure Functions - you shouldn't edit your production Functions in this way. 
+
 ```
 npm install -g k-scratch
 ```
