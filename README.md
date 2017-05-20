@@ -1,5 +1,5 @@
 # k-scratch
-K-Scratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping. This is a port of k-scratch from .NET Core. 
+K-Scratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping. 
 
 ```
 npm install -g k-scratch
@@ -80,3 +80,29 @@ You can open the Kudu Scm site
 ### Compatability
 
 It seems to work around the place... if you have troubles please [create an issue](https://github.com/jakkaj/k-scratch-node/issues)!
+
+### Remote Testing
+
+k-scratch can run your Functions remotely - so you don't have to go in to the portal every time to execute them. 
+
+First, you'll need the master key from the [portal](https://portal.azure.com).
+
+<img src="https://cloud.githubusercontent.com/assets/5225782/26271623/b89d5600-3d4b-11e7-9f0f-cb18f2c73de1.PNG" width="720"/>
+
+Click on your function main node, navigate to "Settings" and copy the master key. 
+
+You now need to pass this in using the ```-k [key]``` option.
+
+It's hand to have the log stream on too!
+
+```ks -l -k <yourKey>```
+
+<img src="https://cloud.githubusercontent.com/assets/5225782/26271681/75ad4d7c-3d4c-11e7-8f05-b7cc0d2ae6e1.gif" width="720"/>
+ 
+Testing will automatically send in the test data that you enter in the portal test run area. It works with HttpTrigger and other string based triggers. I've not had any luck with file based triggers. 
+
+The output from the trigger is shown in your console. 
+
+
+
+
