@@ -99,9 +99,29 @@ It's hand to have the log stream on too!
 
 <img src="https://cloud.githubusercontent.com/assets/5225782/26271681/75ad4d7c-3d4c-11e7-8f05-b7cc0d2ae6e1.gif" width="720"/>
  
-Testing will automatically send in the test data that you enter in the portal test run area. It works with HttpTrigger and other string based triggers. I've not had any luck with file based triggers. 
+Testing will automatically send in the test data that you enter in the portal test run area. It works with HttpTrigger and other string based triggers. 
+
+If you're testing with Blob tiggers, make sure the file really exists (and in the test thing put [container]/path/to/file.txt etc.)
 
 The output from the trigger is shown in your console. 
+
+### Support for compiled functions
+
+It's super easy to work with pre-compiled functions too. This works in VS2017 as well!
+
+- To set up a web project for usage with Azure Functions, follow along [here](https://blogs.msdn.microsoft.com/appserviceteam/2017/03/16/publishing-a-net-class-library-as-a-function-app/). I did the HttpTrigger sample. 
+- Alternatively you can use the Azure Function Tools in Visual Studio 2017.3 and newer. See [this article](https://blogs.msdn.microsoft.com/webdev/2017/05/10/azure-function-tools-for-visual-studio-2017/).
+- "Publish" your project to a folder target (in VS, right click web project, select publish and choose the folder option).
+- Drop your publish profile in the root of the publish folder target (the folder up from where all the files actually went).
+- The first time you do this you will need to upload all the files using the -u option (to upload stuff) with the -p option potining to the publish director (with all the published files in them).  
+- Start monitoring using -m and pass in the publish folder (with the published files in them) to the -p option. 
+
+Now you're ready to edit in Visual Studio / Code. When you want to send files to your live function, run the following build command from the command prompt or run the publish command in Visual Studio again. 
+
+```
+msbuild <your csproj>.csproj /p:DeployOnBuild=true /p:PublishProfile=<your profile>
+```
+
 
 
 
