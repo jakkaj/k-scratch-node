@@ -142,7 +142,9 @@ msbuild <your csproj>.csproj /p:DeployOnBuild=true /p:PublishProfile=<your profi
 ```
 ### Compatibility with Git / Scm deployment
 
-When you add Git based deployment to your Function, editing in the portal is blocked. Using k-scratch you can edit your function even when it's locked in this way locally. When you check in, Kudu will re-deploy you changes from Git the same as usual. 
+When you add Git based deployment to your Function, editing in the portal is blocked. Using k-scratch you can edit your function even when it's locked in this way but downloading and editing locally then sending the files back up via Kudu. 
+
+When you check in, Kudu will re-deploy you changes from Git the same as usual. 
 
 **Note:** Again - please don't using k-scratch on production Functions - it's a dev tool only. Sure - write production code with it, but you've been warned about editing in production!
 
