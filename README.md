@@ -38,7 +38,7 @@ Copy the publish profile in to a new empty folder. The publish profile can be in
         src\somefuc\run.csx
         etc...
 
-You can run ```ks``` by changing to the folder where your publish settings are are located (or any child) or you can use the -p option to set a path (absolute or relative).
+You can run ```ks``` by changing to the folder where your publish settings are are located (or any child) or you can use the ```-p``` option to set a path (absolute or relative).
 
 It's a good idea to keep your publish settings up the path, outside of your repo so you don't accidentally check it in. 
 
@@ -97,19 +97,27 @@ First, you'll need the master key from the [portal](https://portal.azure.com).
 
 Click on your function main node, navigate to "Settings" and copy the master key. 
 
-You now need to pass this in using the ```-k [key]``` option.
-
-It's hand to have the log stream on too!
+You now need to pass this in using the ```-k [key]``` option. 
 
 ```ks -l -k <yourKey>```
 
 <img src="https://cloud.githubusercontent.com/assets/5225782/26271681/75ad4d7c-3d4c-11e7-8f05-b7cc0d2ae6e1.gif" width="720"/>
- 
-Testing will automatically send in the test data that you enter in the portal test run area. It works with HttpTrigger and other string based triggers. 
+
+When the -k option with key is passed in, k-scratch will enumerate all your functions and assign them a number. 
+
+All you have to do is enter the Function number [enter] and k-scratch will run that Function - automatically passing in any test data you've entered in the Azure Portal Function testing area. 
+
+It's handy to have the log stream (```-l```) on too! 
 
 If you're testing with Blob tiggers, make sure the file really exists (and in the test thing put [container]/path/to/file.txt etc.)
 
-The output from the trigger is shown in your console. 
+The output from the trigger is shown in your console:
+
+```
+[Remote] -> 200
+<what ever http returned output from your function if it's a http trigger>
+<other outputs from your function if it uses log.Info (needs the -l logging option)>
+``` 
 
 ### Support for compiled functions
 
