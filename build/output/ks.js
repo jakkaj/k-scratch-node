@@ -38,6 +38,7 @@ var i = new init();
 var logger = i.glue.container.get(ServiceContracts_1.tContracts.ILocalLogService);
 i.start(process.argv).then((e) => {
     if (e) {
+        logger.log('Welcome to k-scratch for Kudu');
         process.stdin.resume();
         process.stdin.on('data', (k) => {
             var key = k.toString();

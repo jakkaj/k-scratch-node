@@ -32,7 +32,7 @@ var logger = i.glue.container.get<ILocalLogService>(tContracts.ILocalLogService)
 
 i.start(process.argv).then((e)=>{
     if(e){       
-        
+        logger.log('Welcome to k-scratch for Kudu');
         process.stdin.resume();
         process.stdin.on('data', (k)=>{
             
