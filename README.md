@@ -105,7 +105,7 @@ You now need to pass this in using the ```-k [key]``` option.
 
 When the -k option with key is passed in, k-scratch will enumerate all your functions and assign them a number. 
 
-All you have to do is enter the Function number [enter] and k-scratch will run that Function - automatically passing in any test data you've entered in the Azure Portal Function testing area. 
+All you have to do is enter the Function number [enter] and k-scratch will run that Function remotely in Azure - automatically passing in any test data you've entered in the Azure Portal Function testing area. 
 
 It's handy to have the log stream (```-l```) on too! 
 
