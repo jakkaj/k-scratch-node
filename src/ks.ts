@@ -6,6 +6,8 @@ import * as program from "commander";
 
 import { IBootService, tContracts, ILocalLogService, IFunctionTestService } from "./model/contract/ServiceContracts";
 
+
+
 class init extends glueBase{
     async start(argv) : Promise<boolean>{    
        var booter = this.glue.container.get<IBootService>(tContracts.IBootService);  
@@ -18,14 +20,15 @@ class init extends glueBase{
     }
     async runTest(funNumb:number){
         var runner = i.glue.container.get<IFunctionTestService>(tContracts.IFunctionTestService);
+        if(!runner.canRunTest()){            
+            return;
+        }
         await runner.runTest(funNumb);
     }
 }
 
 var i = new init();
 var logger = i.glue.container.get<ILocalLogService>(tContracts.ILocalLogService);
-
-
 
 i.start(process.argv).then((e)=>{
     if(e){
@@ -34,11 +37,22 @@ i.start(process.argv).then((e)=>{
         process.stdin.resume();
         process.stdin.on('data', (k)=>{
             
-            var key = k.toString();            
+            var key = k.toString();    
+
+            if(!key.match(/[0-9]+/)){
+                logger.logWarning("Please enter the number of the remote Function to run");
+                return;
+            }
+
+            try{
+
+                var keyNumb = parseInt(key);                       
+                i.runTest(keyNumb);
+            }catch(e){
+                
+            }
+
             
-            var keyNumb = parseInt(key);           
-            
-            i.runTest(keyNumb);
         });
     }else{
         logger.logError("NOT OK");  

@@ -5,6 +5,7 @@ interface IFunctionTestService{
     getFunctionSettings():Promise<Array<functionSettings>>
     getFunctionData(functionKey:string):Promise<boolean>;
     runTest(testNumber:number):Promise<boolean>;
+    canRunTest():boolean
 }
 
 interface IBootService {

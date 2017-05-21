@@ -23,8 +23,20 @@ class functionTestService extends configBase implements IFunctionTestService{
         this.settingsMatch = [];
     }
 
+    canRunTest():boolean{
+        if(this.key){
+            return true;
+        }
+        this.logger.logWarning("[Cannot run remote test] No function key passed in. See documentation for -k option.")
+        return false;
+    }
+
     async runTest(testNumber: number):Promise<boolean>{
         
+        if(!this.key){
+            return false;
+        }
+
         return new Promise<boolean>(async (good, bad)=>{
             if(!this.settingsMatch){
                 this.logger.logError("No settings found to run remote testing");

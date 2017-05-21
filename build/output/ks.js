@@ -27,6 +27,9 @@ class init extends glue_1.glueBase {
     runTest(funNumb) {
         return __awaiter(this, void 0, void 0, function* () {
             var runner = i.glue.container.get(ServiceContracts_1.tContracts.IFunctionTestService);
+            if (!runner.canRunTest()) {
+                return;
+            }
             yield runner.runTest(funNumb);
         });
     }
@@ -39,8 +42,16 @@ i.start(process.argv).then((e) => {
         process.stdin.resume();
         process.stdin.on('data', (k) => {
             var key = k.toString();
-            var keyNumb = parseInt(key);
-            i.runTest(keyNumb);
+            if (!key.match(/[0-9]+/)) {
+                logger.logWarning("Please enter the number of the remote Function to run");
+                return;
+            }
+            try {
+                var keyNumb = parseInt(key);
+                i.runTest(keyNumb);
+            }
+            catch (e) {
+            }
         });
     }
     else {

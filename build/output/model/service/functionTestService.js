@@ -24,8 +24,18 @@ let functionTestService = class functionTestService extends serviceBase_1.config
         this.runKey = null;
         this.settingsMatch = [];
     }
+    canRunTest() {
+        if (this.key) {
+            return true;
+        }
+        this.logger.logWarning("[Cannot run remote test] No function key passed in. See documentation for -k option.");
+        return false;
+    }
     runTest(testNumber) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!this.key) {
+                return false;
+            }
             return new Promise((good, bad) => __awaiter(this, void 0, void 0, function* () {
                 if (!this.settingsMatch) {
                     this.logger.logError("No settings found to run remote testing");
