@@ -1,6 +1,6 @@
 {
   "name": "k-scratch",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "description": "K-Scratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping. You can also test run your Functions in Azure without having to log in to the portal",
   "main": "build/output/ks.js",
   "bin": {
@@ -30,6 +30,7 @@
     "@types/chalk": "^0.4.31",
     "@types/node": "^7.0.13",
     "ava": "^0.19.1",
+    "crlf": "^1.1.0",
     "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-ava": "^0.17.1",
@@ -57,6 +58,7 @@
     "watch": "^1.0.2",
     "xml2js": "^0.4.17"
   },
+  "prepublish": "crlf --set=LF build/output/ks.js",
   "ava": {
     "files": [
       "build/output_test/tests/runTests/**/*.js"
