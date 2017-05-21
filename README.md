@@ -9,7 +9,7 @@ K-Scratch allows you to get, edit and immediately send back changes to Azure Fun
 npm install -g k-scratch
 ```
 
-It's still under dev - please raise issues!
+It's still under dev - please raise issues! I'm active on this at the moment - updating lots, so make sure you check back for updates!
 
 
     -h, --help                 output usage information
