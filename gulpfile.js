@@ -4,6 +4,25 @@ var ava = require('gulp-ava');
 var del = require('del');
 var dest_test = "build/output_test";
 var fs = require('fs');
+var lec = require('gulp-line-ending-corrector');
+var run = require('gulp-run');
+
+gulp.task('publish', ['crlf', 'version'], function(){
+  return run('npm publish').exec()    // prints "Hello World\n". 
+    .pipe(gulp.dest('output'))      // writes "Hello World\n" to output/echo. 
+  ;
+});
+
+gulp.task('version', function(){
+  return run('npm version minor').exec()    // prints "Hello World\n". 
+    .pipe(gulp.dest('output'))      // writes "Hello World\n" to output/echo. 
+  ;
+});
+
+gulp.task('crlf', function(){
+  return gulp.src(['build/output/ks.js'])
+    .pipe(lec({verbose:true, eolc: 'LF'}))
+});
 
 gulp.task('test',["compile:tests"], function() {
     return gulp.src(dest_test + '/tests/runTests/*.js')
