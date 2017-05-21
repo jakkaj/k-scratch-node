@@ -19,7 +19,6 @@ const fs = require("fs");
 const tmp = require("tmp");
 const path = require("path");
 const del = require("del");
-const unzip = require("unzip-stream");
 const admzip = require("adm-zip");
 const watch = require("watch");
 const kuduApi = require("kudu-api");
@@ -178,10 +177,12 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                 });
                 var requestUri = "https://" + this.publishProfile.publishUrl + "/api/zip/site/wwwroot/";
                 var dlUri = 'site/wwwroot/';
+                var directPath = process.cwd();
                 if (subPath != null && subPath.length > 0) {
                     subPath = this._stringHelper.trim(subPath, '\\\\/');
                     requestUri += subPath + "/";
                     dlUri += subPath + "/";
+                    directPath = path.join(directPath, subPath);
                 }
                 this.logger.log(`[Downloading] -> ${requestUri}`);
                 kudu.zip.download(dlUri, tmpFile.name, (e) => __awaiter(this, void 0, void 0, function* () {
@@ -192,7 +193,8 @@ let kuduFileService = class kuduFileService extends serviceBase_1.configBase {
                     }
                     else {
                         this.logger.logInfo("Downloaded to temp file: " + tmpFile.name);
-                        fs.createReadStream(tmpFile.name).pipe(unzip.Extract({ path: "./" }));
+                        var zip = new admzip(tmpFile.name);
+                        zip.extractAllTo(directPath);
                         yield del(tmpFile.name, { force: true });
                         good(true);
                     }

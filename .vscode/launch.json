@@ -10,9 +10,9 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-l",                
-                "-p","C:\\Users\\jakka\\demo\\videoIngest\\src\\",
-                "-m"
+                "-g",                
+                "-p","/Users/Jordan/demo/func/src"
+                
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",

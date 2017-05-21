@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as tmp from "tmp";
 import * as path from "path";
 import * as del from "del";
-import * as unzip from "unzip-stream";
 import * as admzip from "adm-zip";
 import * as watch from 'watch';
 import * as kuduApi from 'kudu-api';
@@ -195,12 +194,15 @@ class kuduFileService extends configBase implements IKuduFileService {
 
             var dlUri = 'site/wwwroot/';
 
+            var directPath = process.cwd();
+
             if (subPath != null && subPath.length > 0)
             {
                 subPath = this._stringHelper.trim(subPath, '\\\\/');
                 requestUri += subPath + "/";
                 dlUri += subPath + "/";
-            }            
+                directPath = path.join(directPath, subPath);
+            }
 
             this.logger.log(`[Downloading] -> ${requestUri}`);
 
@@ -210,8 +212,9 @@ class kuduFileService extends configBase implements IKuduFileService {
                     bad(false);
                     return;
                 }else{
-                   this.logger.logInfo("Downloaded to temp file: " + tmpFile.name); 
-                   fs.createReadStream(tmpFile.name).pipe(unzip.Extract({path: "./"}));
+                   this.logger.logInfo("Downloaded to temp file: " + tmpFile.name);
+                   var zip = new admzip(tmpFile.name);
+                   zip.extractAllTo(directPath);                     
                    await del(tmpFile.name, {force:true});
                    good(true);   
                 }
