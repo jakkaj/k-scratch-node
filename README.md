@@ -3,7 +3,7 @@ K-Scratch allows you to get, edit and immediately send back changes to Azure Fun
 
 **Warning:** This is a tool to aid in the development of Azure Functions - you shouldn't edit your production Functions in this way. 
 
-**Note:** If you want to access your Kudu Scm site through a nice node API, then you're looking for [kudu-api](https://www.npmjs.com/package/kudu-api) (which this project uses :)).
+**Note:** This is a command line tool - it's not meant to be used as a "require". If you want to access your Kudu Scm site through a nice node API, then you're looking for [kudu-api](https://www.npmjs.com/package/kudu-api) (which this project uses :)).
 
 ```
 npm install -g k-scratch
