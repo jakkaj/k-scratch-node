@@ -50,10 +50,12 @@ Output the log stream to your local console.
 ```ks -l```
 
 ### Monitor Files
-Monitor and upload files as you edit them
-```ks -m```
+Monitor and upload files as soon as you save them.
+```ks -m``` 
 
-This works well with the ```-l``` option so you can monitor and see the output. 
+This works well with the ```-l``` option so you can monitor and see the output.
+
+**Note for Windows Linux Bash:** If you're using Windows Subsystem for Linux you cannot get file monitoring events in Linux for files you edit in Windows (like editing in VS Code, but running k-scratch in Linux for example). You will have to run k-scratch in CMD or Powershell. 
 
 ### Download Files
 Copy your function files to you local path.
