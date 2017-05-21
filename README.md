@@ -1,6 +1,10 @@
 # k-scratch
 K-Scratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping. 
 
+It's a great way to edit your functions on Windows, Linux and Mac using open source development tools such as Atom and Visual Studio Code. When you save edits to your files they are immediately sent back to Azure. 
+
+You can fire your Functions remotely and see the result in your local console as all debug output is sent from the remote Azure environment right to your local console. 
+
 **Warning:** This is a tool to aid in the development of Azure Functions - you shouldn't edit your production Functions in this way. 
 
 **Note:** This is a command line tool - it's not meant to be used as a "require". If you want to access your Kudu Scm site through a nice node API, then you're looking for [kudu-api](https://www.npmjs.com/package/kudu-api) (which this project uses :)).
@@ -10,7 +14,6 @@ npm install -g k-scratch
 ```
 
 It's still under dev - please raise issues! I'm active on this at the moment - updating lots, so make sure you check back for updates!
-
 
     -h, --help                 output usage information
     -V, --version              output the version number
