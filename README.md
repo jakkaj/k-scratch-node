@@ -62,6 +62,8 @@ Copy your function files to you local path.
 
  ```ks -g```
 
+**Note:** Be careful not to overwrite your local changes with this command - it will not ask you before overwriting files that exist!
+
 ### Upload Files
 
 Upload your entire function set of folders to the server.
@@ -76,6 +78,7 @@ You can operate on a sub folder by using ```ks -u -f somefunc```. This works wit
 
 You can create a [funcgraph](https://github.com/jakkaj/funcgraph) graph - ```ks -d pathToSvgOutput.svg```
 
+**Note:** This graph is generated from your local copy of the Functions. Remember to use ```-g``` to get the latest version from the server first. But be careful not to overwrite!
 
 <img src="https://cloud.githubusercontent.com/assets/5225782/24825002/35c2318c-1c59-11e7-9c9c-155ce0e14267.png" width="520"/>
 
@@ -137,6 +140,12 @@ Now you're ready to edit in Visual Studio / Code. When you want to send files to
 ```
 msbuild <your csproj>.csproj /p:DeployOnBuild=true /p:PublishProfile=<your profile>
 ```
+### Compatibility with Git / Scm deployment
+
+When you add Git based deployment to your Function, editing in the portal is blocked. Using k-scratch you can edit your function even when it's locked in this way locally. When you check in, Kudu will re-deploy you changes from Git the same as usual. 
+
+**Note:** Again - please don't using k-scratch on production Functions - it's a dev tool only. Sure - write production code with it, but you've been warned about editing in production!
+
 
 
 
