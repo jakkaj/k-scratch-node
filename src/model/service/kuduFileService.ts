@@ -159,6 +159,11 @@ class kuduFileService extends configBase implements IKuduFileService {
                     }
                 });
             }else{
+                var stat = fs.statSync(file);
+                if(stat.isDirectory()){
+                    this.logger.logWarning(`[Skip Upload Directory] -> ${file}`);
+                    return;
+                }
                 kudu.vfs.uploadFile(file, uPath, (e)=>{
                     if(e){
                         this.logger.logError(`[Upload File Error] -> ${e}`)

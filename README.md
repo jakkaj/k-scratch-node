@@ -140,6 +140,19 @@ Now you're ready to edit in Visual Studio / Code. When you want to send files to
 ```
 msbuild <your csproj>.csproj /p:DeployOnBuild=true /p:PublishProfile=<your profile>
 ```
+
+### Azure Function tooling for Visual Studio 2017 
+
+Visual Studio 2017.3 adds great [support for Azure Functions](https://blogs.msdn.microsoft.com/webdev/2017/05/10/azure-function-tools-for-visual-studio-2017/). k-scratch works really well with this - allowing you to rapidly work with live Functions in Azure. 
+
+Create a new function and set up publishing to Azure, then perform the publish. 
+
+You can then run ```ks -l -m``` from your ```bin\debug\net461``` folder or similar. Every time you build, the changes will be fired to the remote host. 
+
+**Note:** You should use the built in Visual Studio publish to Azure option when even you add or remove a new function. K-scratch sort of gets it right, but I experienced some flakyness. 
+
+
+
 ### Compatibility with Git / Scm deployment
 
 When you add Git based deployment to your Function, editing in the portal is blocked. Using k-scratch you can edit your function even when it's locked in this way but downloading and editing locally then sending the files back up via Kudu. 

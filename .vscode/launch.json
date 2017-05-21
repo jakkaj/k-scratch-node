@@ -10,9 +10,8 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-l",
-                "-k", "02mtWqPfAGtmjzzepqUPwf1QnOTZd/i0qC0QrKgxwLERhCa9uQRaNg==",                
-                "-p","C:\\Temp\\videoIngestion\\src2",
+                "-l",                
+                "-p","C:\\Users\\jakka\\demo\\videoIngest\\src\\",
                 "-m"
             ],
             "cwd": "${workspaceRoot}",
