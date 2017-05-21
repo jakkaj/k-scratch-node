@@ -8,11 +8,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const request = require("request");
+require('dotenv').config();
 const serviceBase_1 = require("./serviceBase");
 let kuduLogService = class kuduLogService extends serviceBase_1.configBase {
     constructor() {
-        super(...arguments);
+        super();
         this._publishProfile = null;
+        this._ignoreSystemLogs = true;
+        this.lineCache = [];
+        this.lineIgnores = [
+            "Executed HTTP request: {",
+            "Executing HTTP request: {",
+            "Response details: {",
+            "Host Status: {"
+        ];
+        if (process.env.HIDE_SYSTEM_LOGS != undefined) {
+            this._ignoreSystemLogs = process.env.HIDE_SYSTEM_LOGS;
+        }
     }
     init() {
         if (this._publishProfile != null) {
@@ -20,6 +32,32 @@ let kuduLogService = class kuduLogService extends serviceBase_1.configBase {
         }
         var p = this.getDefaultConfig();
         this._publishProfile = p;
+    }
+    ignoreLine(line) {
+        var ignore = false;
+        while (this.lineCache.length > 30) {
+            this.lineCache.splice(0, 1);
+        }
+        this.lineCache.forEach((c, i, a) => {
+            if (c === line) {
+                ignore = true;
+            }
+        });
+        this.lineCache.push(line);
+        if (!this._ignoreSystemLogs) {
+            return false;
+        }
+        this.lineIgnores.forEach((c, i, a) => {
+            if (line.indexOf(c) != -1) {
+                ignore = true;
+            }
+        });
+        var year = new Date().getFullYear();
+        //Logs that do not have a time code are part of status dumps and we don't want to see them
+        if (!line.startsWith(year.toString())) {
+            ignore = true;
+        }
+        return ignore;
     }
     startLog() {
         this.init();
@@ -32,6 +70,9 @@ let kuduLogService = class kuduLogService extends serviceBase_1.configBase {
         logReq.on('data', (chunk) => {
             var c = chunk.toString('utf8').trim();
             if (!c || (c && c.length == 0)) {
+                return;
+            }
+            if (this.ignoreLine(c)) {
                 return;
             }
             this.logger.log(c);
