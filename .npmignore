@@ -1,2 +1,5 @@
 src/**
 gulfile.js
+.vscode
+.vs
+.env
