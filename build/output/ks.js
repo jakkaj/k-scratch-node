@@ -38,7 +38,6 @@ var i = new init();
 var logger = i.glue.container.get(ServiceContracts_1.tContracts.ILocalLogService);
 i.start(process.argv).then((e) => {
     if (e) {
-        logger.logGood("OK");
         process.stdin.resume();
         process.stdin.on('data', (k) => {
             var key = k.toString();
@@ -55,8 +54,7 @@ i.start(process.argv).then((e) => {
         });
     }
     else {
-        logger.logError("NOT OK");
-        process.exit(1);
+        process.exit(0);
     }
 }).catch((e) => {
     logger.logError(e);

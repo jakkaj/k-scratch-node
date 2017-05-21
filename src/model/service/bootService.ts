@@ -59,6 +59,8 @@ class bootService extends serviceBase implements IBootService {
             return false;
         }
 
+        var stayRunning: boolean = false;
+
         if(program.get){
             var getResult = await this._kuduFileService.getFiles(subFolder);
         }
@@ -86,13 +88,15 @@ class bootService extends serviceBase implements IBootService {
 
         if(program.log){
             this._kuduLogService.startLog();
+            stayRunning = true;
         }
 
         if(program.monitor){
             this._kuduFileService.monitor();
+            stayRunning = true;
         }        
 
-        return initGood;
+        return stayRunning;
     }
     
    private _help(){

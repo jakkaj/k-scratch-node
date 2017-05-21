@@ -52,6 +52,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             if (!initGood) {
                 return false;
             }
+            var stayRunning = false;
             if (program.get) {
                 var getResult = yield this._kuduFileService.getFiles(subFolder);
             }
@@ -75,11 +76,13 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             }
             if (program.log) {
                 this._kuduLogService.startLog();
+                stayRunning = true;
             }
             if (program.monitor) {
                 this._kuduFileService.monitor();
+                stayRunning = true;
             }
-            return initGood;
+            return stayRunning;
         });
     }
     _help() {
