@@ -27,8 +27,7 @@ It's still under dev - please raise issues! I'm active on this at the moment - u
     -k, --key [key]            Function key for use when calling test endpoints
     -d, --diagram [path]       Create a diagram of the function and save it to the file parameter
 
-
-<img src="https://cloud.githubusercontent.com/assets/5225782/25368876/39ed6d4a-29c3-11e7-98e8-e0d059a94967.gif" width="720"/>
+<img src="https://cloud.githubusercontent.com/assets/5225782/26283331/ccd74256-3e69-11e7-904a-6f135cdcf7ae.gif" width="720"/>
 
 Grab a publish profile from Azure. Click on your Functions top level menu item and select "Download publish profile". 
 
