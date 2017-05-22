@@ -111,16 +111,16 @@ class bootService extends serviceBase implements IBootService {
     private _process(argv){
         program
             .version("{$version}")
-            .option('-l, --log', 'Output the Kudulog stream to the console')
-            .option('-p, --path [functionPath]', 'The base path of your function (blank for current path)')
-            .option('--profile [profilePath]', 'Full path to a profile file (optional - will auto scan up for profile path if omitted)')
-            .option('-m, --monitor', 'Monitor the path for changes and send them up')
-            .option('-g, --get', 'Download the Function app ready for editing locally. Works with the -f sub folder option')
-            .option('-u, --upload', 'Upload a folder to the server. Works with the -f sub folder option')
-            .option('-f, --folder [folder]', 'Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu')
-            .option('-s, --scm', 'Open the Kudu Scm Site')
-            .option('-k, --key [key]', 'Function key for use when calling test endpoints')
-            .option('-d, --diagram [path]', 'Create a diagram of the function and save it to the file parameter')
+            .option('-l, --log', 'output the Kudulog stream to the console')
+            .option('-p, --path [functionPath]', 'the base path of your function (blank for current path)')
+            .option('--profile [profilePath]', 'full path to a profile file (optional - will auto scan up for profile path if omitted)')
+            .option('-m, --monitor', 'monitor the path for changes and send them up')
+            .option('-g, --get', 'download the Function app ready for editing locally, works with the -f sub folder option')
+            .option('-u, --upload', 'upload a folder to the server, works with the -f sub folder option')
+            .option('-f, --folder [folder]', 'sub folder to get or upload, if omitted it will get or send everything under wwwroot from Kudu')
+            .option('-s, --scm', 'open the Kudu Scm Site in your default browser')
+            .option('-k, --key [key]', 'function key for use when calling test endpoints')
+            .option('-d, --diagram [path]', 'create a diagram of the function and save it to the file parameter')
             .parse(argv);
     }
 }

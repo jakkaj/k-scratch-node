@@ -17,16 +17,16 @@ It's still under dev - please raise issues! I'm active on this at the moment - u
 
     -h, --help                 output usage information
     -V, --version              output the version number
-    -l, --log                  Output the Kudulog stream to the console
-    -p, --path [functionPath]  The base path of your function (blank for current path)
-    --profile [profilePath]    Full path to a profile file (optional - will auto scan up for profile path if omitted)
-    -m, --monitor              Monitor the path for changes and send them up
-    -g, --get                  Download the Function app ready for editing locally. Works with the -f sub folder option
-    -u, --upload               Upload a folder to the server. Works with the -f sub folder option
-    -f, --folder [folder]      Sub folder to get or upload. If omitted it will get or send everything under wwwroot from Kudu
-    -s, --scm                  Open the Kudu Scm Site
-    -k, --key [key]            Function key for use when calling test endpoints
-    -d, --diagram [path]       Create a diagram of the function and save it to the file parameter
+    -l, --log                  output the Kudulog stream to the console
+    -p, --path [functionPath]  the base path of your function (blank for current path)
+    --profile [profilePath]    full path to a profile file (optional - will auto scan up for profile path if omitted)
+    -m, --monitor              monitor the path for changes and send them up
+    -g, --get                  download the Function app ready for editing locally, works with the -f sub folder option
+    -u, --upload               upload a folder to the server, works with the -f sub folder option
+    -f, --folder [folder]      sub folder to get or upload, if omitted it will get or send everything under wwwroot from Kudu
+    -s, --scm                  open the Kudu Scm Site in your default browser
+    -k, --key [key]            function key for use when calling test endpoints
+    -d, --diagram [path]       create a diagram of the function and save it to the file parameter
 
 <img src="https://cloud.githubusercontent.com/assets/5225782/26283331/ccd74256-3e69-11e7-904a-6f135cdcf7ae.gif" width="720"/>
 
