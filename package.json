@@ -1,6 +1,6 @@
 {
   "name": "k-scratch",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "K-Scratch allows you to get, edit and immediately send back changes to Azure Functions for fast prototyping. You can also test run your Functions in Azure without having to log in to the portal",
   "main": "build/output/ks.js",
   "bin": {
