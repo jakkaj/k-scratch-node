@@ -19,6 +19,7 @@ It's still under dev - please raise issues! I'm active on this at the moment - u
     -V, --version              output the version number
     -l, --log                  Output the Kudulog stream to the console
     -p, --path [functionPath]  The base path of your function (blank for current path)
+    --profile [profilePath]    Full path to a profile file (optional - will auto scan up for profile path if omitted)
     -m, --monitor              Monitor the path for changes and send them up
     -g, --get                  Download the Function app ready for editing locally. Works with the -f sub folder option
     -u, --upload               Upload a folder to the server. Works with the -f sub folder option
