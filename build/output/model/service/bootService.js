@@ -38,6 +38,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             var subFolder = null;
             var cwdPath = null;
             var key = null;
+            var profile = null;
             if (argv.length === 2) {
                 this._help();
                 return;
@@ -45,10 +46,13 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             if (program.path) {
                 cwdPath = program.path;
             }
+            if (program.profile) {
+                profile = program.profile;
+            }
             if (program.folder) {
                 subFolder = program.folder;
             }
-            var initGood = yield this._configService.init(cwdPath);
+            var initGood = yield this._configService.init(cwdPath, profile);
             if (!initGood) {
                 return false;
             }
@@ -93,6 +97,7 @@ let bootService = class bootService extends serviceBase_1.serviceBase {
             .version("{$version}")
             .option('-l, --log', 'Output the Kudulog stream to the console')
             .option('-p, --path [functionPath]', 'The base path of your function (blank for current path)')
+            .option('--profile [profilePath]', 'Full path to a profile file (optional - will auto scan up for profile path if omitted)')
             .option('-m, --monitor', 'Monitor the path for changes and send them up')
             .option('-g, --get', 'Download the Function app ready for editing locally. Works with the -f sub folder option')
             .option('-u, --upload', 'Upload a folder to the server. Works with the -f sub folder option')

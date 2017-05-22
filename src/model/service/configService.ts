@@ -24,7 +24,7 @@ class configService extends serviceBase implements IConfigService {
         super();
     }
 
-    public async init(basePath:string) : Promise<boolean>{
+    public async init(basePath:string, profileFile?:string) : Promise<boolean>{
         
         if(!basePath){
             basePath = process.cwd().toString();
@@ -44,15 +44,14 @@ class configService extends serviceBase implements IConfigService {
 
         process.chdir(this._basePath);
 
-       
-
-
-        if(!this._validatePath(this._basePath)){
+       if(!this._validatePath(this._basePath)){
             this.logger.logError("Path not found " + this._basePath);
             return false;
         }
 
-        var configFile = await this._findConfigFile(this._basePath);
+
+
+        var configFile = await this._findConfigFile(profileFile ? profileFile : this._basePath);
         
         if(configFile == null){
             this.logger.logWarning("No Publish Settings file - see https://github.com/jakkaj/k-scratch")
@@ -100,9 +99,23 @@ class configService extends serviceBase implements IConfigService {
     private async _findConfigFile(cwd: string):Promise<string>{
         try{
 
+            if(fs.existsSync(cwd)){
+                if(fs.statSync(cwd).isFile()){
+                    var fData = fs.readFileSync(cwd);
+                    
+                    if(fData && fData.indexOf("publishData")!=-1){
+                        this.logger.log(`[Publish settings] -> ${cwd}`);
+                        return cwd;
+                    }else{
+                        this.logger.logError(`[Publish settings file problem] ${cwd} is not a valid publish settings file`);
+                        return null;
+                    }            
+                }
+            }
+
             if(!this._validatePath(cwd)){
                 return null;
-            }
+            }            
 
             var files = await afs.readdir(cwd);
             

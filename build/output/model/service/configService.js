@@ -27,7 +27,7 @@ let configService = class configService extends serviceBase_1.serviceBase {
         super();
         this._basePath = null;
     }
-    init(basePath) {
+    init(basePath, profileFile) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!basePath) {
                 basePath = process.cwd().toString();
@@ -46,7 +46,7 @@ let configService = class configService extends serviceBase_1.serviceBase {
                 this.logger.logError("Path not found " + this._basePath);
                 return false;
             }
-            var configFile = yield this._findConfigFile(this._basePath);
+            var configFile = yield this._findConfigFile(profileFile ? profileFile : this._basePath);
             if (configFile == null) {
                 this.logger.logWarning("No Publish Settings file - see https://github.com/jakkaj/k-scratch");
                 return false;
@@ -84,6 +84,19 @@ let configService = class configService extends serviceBase_1.serviceBase {
     _findConfigFile(cwd) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                if (fs.existsSync(cwd)) {
+                    if (fs.statSync(cwd).isFile()) {
+                        var fData = fs.readFileSync(cwd);
+                        if (fData && fData.indexOf("publishData") != -1) {
+                            this.logger.log(`[Publish settings] -> ${cwd}`);
+                            return cwd;
+                        }
+                        else {
+                            this.logger.logError(`[Publish settings file problem] ${cwd} is not a valid publish settings file`);
+                            return null;
+                        }
+                    }
+                }
                 if (!this._validatePath(cwd)) {
                     return null;
                 }

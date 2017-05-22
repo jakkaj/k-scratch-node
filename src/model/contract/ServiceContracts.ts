@@ -28,7 +28,7 @@ interface IKuduFileService{
 }
 
 interface IConfigService{
-    init(basePath:string) : Promise<boolean>;
+    init(basePath:string, profileFile?:string) : Promise<boolean>;
     getPublishProfile(profileName:string):publishProfile;
     basePath:string;
     openKuduSite();
