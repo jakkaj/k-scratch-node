@@ -7,7 +7,7 @@ You can fire your Functions remotely and see the result in your local console as
 
 Works great with code - this GIF shows it working in the Visual Studio Code terminal, automatically uploading after the TypeScript was built. (The example shown here is [this repo](https://github.com/jakkaj/codegraph)).
 
-<img src="https://cloud.githubusercontent.com/assets/5225782/26343519/a9890e8e-3fdf-11e7-96c1-594e168e82f0.gif"/>
+<img src="https://cloud.githubusercontent.com/assets/5225782/26348199/553d80f2-3fef-11e7-8f41-dcaa4ce4a950.gif"/>
 
 **Warning:** This is a tool to aid in the development of Azure Functions - you shouldn't edit your production Functions in this way. 
 
