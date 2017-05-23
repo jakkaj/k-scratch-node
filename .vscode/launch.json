@@ -10,9 +10,8 @@
             "name": "Launch Program",
             "program": "${workspaceRoot}/src/ks.ts",
             "args": [
-                "-l", "-m",                
-                "-p","C:\\Users\\jak\\Documents\\GitHub\\Ascend\\functions\\src",
-                "--profile", "C:\\Temp\\profiles\\VideoIngestion.PublishSettings"                
+                "-g",
+                "-p","C:\\Temp\\func\\another\\src"                
             ],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build:dev:fast",
