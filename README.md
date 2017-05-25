@@ -5,7 +5,7 @@ It's a great way to edit your functions on Windows, Linux and Mac using open sou
 
 You can fire your Functions remotely and see the result in your local console as all debug output is sent from the remote Azure environment right to your local console. 
 
-Works great with code - this GIF shows it working in the Visual Studio Code terminal, automatically uploading after the TypeScript was built. (The example shown here is [this repo](https://github.com/jakkaj/codegraph)).
+Works great with [Visual Studio Code](https://code.visualstudio.com/) - this GIF shows it working in the Visual Studio Code terminal, automatically uploading after the TypeScript was built. (The example shown here is [this repo](https://github.com/jakkaj/codegraph)).
 
 <img src="https://cloud.githubusercontent.com/assets/5225782/26348199/553d80f2-3fef-11e7-8f41-dcaa4ce4a950.gif"/>
 
